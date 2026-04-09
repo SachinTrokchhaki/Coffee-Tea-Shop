@@ -1,0 +1,83 @@
+cafe_tea_shop/
+├── manage.py
+├── requirements.txt
+├── README.md
+├── .env (environment variables)
+├── .gitignore
+│
+├── cafe_shop/              # Main project folder
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+│
+├── apps/
+│   ├── products/           # Product management
+│   │   ├── migrations/
+│   │   ├── templates/products/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py       # Product, Category models
+│   │   ├── views.py        # Product listing, detail views
+│   │   ├── urls.py
+│   │   └── forms.py
+│   │
+│   ├── cart/               # Shopping cart functionality
+│   │   ├── migrations/
+│   │   ├── templates/cart/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py       # Cart, CartItem models
+│   │   ├── views.py        # Add/remove/update cart
+│   │   ├── urls.py
+│   │   └── context_processors.py  # Cart count globally
+│   │
+│   ├── accounts/           # User authentication
+│   │   ├── migrations/
+│   │   ├── templates/accounts/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py       # Custom User model (optional)
+│   │   ├── views.py        # Login, logout, register, profile
+│   │   ├── urls.py
+│   │   └── forms.py        # Registration, login forms
+│   │
+│   └── orders/             # Order management (future)
+│       ├── migrations/
+│       ├── templates/orders/
+│       ├── __init__.py
+│       ├── admin.py
+│       ├── apps.py
+│       ├── models.py       # Order, OrderItem models
+│       ├── views.py
+│       └── urls.py
+│
+├── static/                 # Static files
+│   ├── css/
+│   │   ├── main.css
+│   │   └── responsive.css
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── cart.js
+│   │   └── mobile-menu.js
+│   ├── images/             # Product images (placeholder for now)
+│   └── vendor/             # Bootstrap, FontAwesome, etc.
+│
+├── media/                  # User uploaded images
+│   └── products/
+│
+├── templates/              # Global templates
+│   ├── base.html           # Main template with navbar
+│   ├── index.html          # Homepage
+│   ├── includes/
+│   │   ├── navbar.html
+│   │   ├── footer.html
+│   │   ├── mobile_menu.html
+│   │   └── cart_sidebar.html
+│   └── 404.html
+│
+└── requirements.txt

@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block home_active %}active{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-text">
+      <span class="hero-badge">Since 2024</span>
+      <h1>Welcome to<br><span class="highlight">Coffee & Tea</span> Shop</h1>
+      <p>Explore our selection of handcrafted coffee and tea made with love and passion. Each cup tells a story.</p>
+      <div class="hero-buttons">
+        <button class="hero-btn primary-btn" onclick="scrollToMenu()">View Products</button>
+        <button class="hero-btn secondary-btn" onclick="scrollToAbout()">Learn More</button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="{% static 'images/mainsection.png' %}" alt="Pouring coffee into cup" />
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <div class="container">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">☕</div>
+        <h3>Premium Quality</h3>
+        <p>Sourced from the finest coffee and tea plantations worldwide</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌱</div>
+        <h3>Sustainable</h3>
+        <p>Eco-friendly packaging and ethical sourcing practices</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚚</div>
+        <h3>Free Delivery</h3>
+        <p>Free shipping on orders over रू 2,500</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <h3>Secure Payment</h3>
+        <p>100% secure payment methods</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Menu Section -->
+<section class="menu" id="menuSection">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-subtitle">Our Collection</span>
+      <h2>Popular Menu</h2>
+      <p>Discover our most loved coffee and tea selections</p>
+    </div>
+    <div class="menu-grid">
+      
+      <!-- Product 1 - Black Tea -->
+      <div class="product-card">
+        <div class="product-image">
+          <img src="{% static 'images/black-tea.jpg' %}" alt="Black Tea" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=Black+Tea'">
+          <span class="product-badge">Bestseller</span>
+        </div>
+        <div class="product-card-body">
+          <h3>Black Tea</h3>
+          <p class="desc">A classic tea with a rich, robust flavor. Perfect for any time of day.</p>
+          <div class="product-footer">
+            <span class="price">रू 260.00</span>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2 - Black Coffee -->
+      <div class="product-card">
+        <div class="product-image">
+          <img src="{% static 'images/black-coffee.jpg' %}" alt="Black Coffee" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=Black+Coffee'">
+        </div>
+        <div class="product-card-body">
+          <h3>Black Coffee</h3>
+          <p class="desc">A bold and smooth black coffee made from 100% Arabica beans.</p>
+          <div class="product-footer">
+            <span class="price">रू 390.00</span>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3 - Milk Coffee -->
+      <div class="product-card">
+        <div class="product-image">
+          <img src="{% static 'images/milk-coffee.jpg' %}" alt="Milk Coffee" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=Milk+Coffee'">
+          <span class="product-badge new">New</span>
+        </div>
+        <div class="product-card-body">
+          <h3>Milk Coffee</h3>
+          <p class="desc">A smooth blend of coffee and milk with a creamy texture.</p>
+          <div class="product-footer">
+            <span class="price">रू 520.00</span>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 4 - Green Tea -->
+      <div class="product-card">
+        <div class="product-image">
+          <img src="{% static 'images/green-tea.jpg' %}" alt="Green Tea" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=Green+Tea'">
+        </div>
+        <div class="product-card-body">
+          <h3>Green Tea</h3>
+          <p class="desc">A refreshing tea with a mild, grassy taste. Rich in antioxidants.</p>
+          <div class="product-footer">
+            <span class="price">रू 325.00</span>
+            <button class="add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section" id="aboutSection">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-image">
+        <img src="{% static 'images/about-coffee.jpg' %}" alt="About Us" onerror="this.src='https://placehold.co/500x400/2d5a3d/white?text=Our+Coffee+Shop'">
+      </div>
+      <div class="about-content">
+        <span class="section-subtitle">Our Story</span>
+        <h2>We Bring the Best<br>Coffee & Tea From Around the World</h2>
+        <p>Founded in 2024, our passion for exceptional coffee and tea drives us to source the finest beans and leaves from sustainable farms worldwide.</p>
+        <div class="about-stats">
+          <div class="stat">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Products</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">10k+</span>
+            <span class="stat-label">Happy Customers</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">15+</span>
+            <span class="stat-label">Countries</span>
+          </div>
+        </div>
+        <button class="about-btn">Read More</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter">
+  <div class="container">
+    <div class="newsletter-content">
+      <h2>Subscribe to Our Newsletter</h2>
+      <p>Get 10% off your first order and receive exclusive offers</p>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" placeholder="Enter your email address" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Scroll functions
+  function scrollToMenu() {
+    const menuSection = document.getElementById('menuSection');
+    if (menuSection) {
+      menuSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+  
+  function scrollToAbout() {
+    const aboutSection = document.getElementById('aboutSection');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+  
+  // Add to cart buttons (static alert)
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      alert('✨ Item added to cart! (Demo version)');
+    });
+  });
+  
+  // Newsletter form
+  const newsletterForm = document.getElementById('newsletterForm');
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = this.querySelector('input').value;
+      if (email) {
+        alert(`Thanks for subscribing! 📧\nWe'll send updates to: ${email}`);
+        this.reset();
+      }
+    });
+  }
+</script>
+{% endblock %}

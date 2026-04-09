@@ -1,0 +1,15 @@
+
+mkdir coffee_shop
+cd coffee_shop
+
+# Now create virtual environment
+python3 -m venv venv
+
+# Activate it
+source venv/bin/activate
+
+# Install Django and packages
+pip install django
+
+# Create Django project
+django-admin startproject project_name("cafe_shop") 

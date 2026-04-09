@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coffee &amp; Tea Shop | {% block title %}Home{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Desktop Navigation -->
+  <nav class="navbar desktop-nav">
+    <div class="nav-container">
+      <a href="/" class="navbar-brand">
+        <span class="brand-icon">☕</span>
+        <span class="brand-text">Coffee &amp; Tea Shop</span>
+      </a>
+      <ul class="navbar-links">
+        <li><a href="/" class="{% block home_active %}{% endblock %}">Home</a></li>
+        <li><a href="/products" class="{% block products_active %}{% endblock %}">Products</a></li>
+        <li><a href="/about" class="{% block about_active %}{% endblock %}">About</a></li>
+        <li><a href="/contact" class="{% block contact_active %}{% endblock %}">Contact</a></li>
+        <li><a href="/cart">🛒 Cart</a></li>
+        <li><a href="/login" class="login-btn">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav">
+    <div class="mobile-nav-container">
+      <a href="/" class="mobile-brand">
+        <span>☕</span> Coffee & Tea
+      </a>
+      <button class="hamburger" id="hamburgerBtn">☰</button>
+    </div>
+    
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-menu-header">
+        <h3>Menu</h3>
+        <button class="close-menu" id="closeMenuBtn">✕</button>
+      </div>
+      <ul class="mobile-menu-links">
+        <li><a href="/">🏠 Home</a></li>
+        <li><a href="/products">☕ Products</a></li>
+        <li><a href="/about">📖 About</a></li>
+        <li><a href="/contact">📞 Contact</a></li>
+        <li><a href="/login">🔐 Login</a></li>
+        <li><a href="/register">📝 Register</a></li>
+        <li><a href="/cart">🛒 Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Main Content Block -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <h3>☕ Coffee & Tea Shop</h3>
+          <p>Handcrafted beverages made with love and passion since 2024.</p>
+          <div class="social-links">
+            <a href="#">📘</a>
+            <a href="#">📷</a>
+            <a href="#">🐦</a>
+            <a href="#">🎵</a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Customer Service</h4>
+          <ul>
+            <li><a href="#">FAQs</a></li>
+            <li><a href="#">Shipping Info</a></li>
+            <li><a href="#">Returns</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact Us</h4>
+          <ul>
+            <li>📍 123 Coffee Street, KTM</li>
+            <li>📞 (555) 123-4567</li>
+            <li>✉️ hello@coffeetea.com</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Coffee & Tea Shop. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
