@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Register - Coffee & Tea Shop{% endblock %}
+{% block title %}Login - Coffee & Tea Shop{% endblock %}
 
 {% block extra_css %}
 <style>
-  /* Modern Register Page Styles */
-  .register-page {
+  /* Modern Login Page Styles */
+  .login-page {
     min-height: calc(100vh - 300px);
     display: flex;
     align-items: center;
@@ -18,35 +18,35 @@
   }
   
   /* Background decoration */
-  .register-page::before {
-    content: '🍃';
+  .login-page::before {
+    content: '☕';
     position: absolute;
     font-size: 300px;
     opacity: 0.05;
     bottom: -50px;
+    right: -50px;
+    transform: rotate(-15deg);
+    pointer-events: none;
+  }
+  
+  .login-page::after {
+    content: '🍃';
+    position: absolute;
+    font-size: 200px;
+    opacity: 0.05;
+    top: -50px;
     left: -50px;
     transform: rotate(15deg);
     pointer-events: none;
   }
   
-  .register-page::after {
-    content: '☕';
-    position: absolute;
-    font-size: 250px;
-    opacity: 0.05;
-    top: -50px;
-    right: -50px;
-    transform: rotate(-10deg);
-    pointer-events: none;
-  }
-  
-  .register-container {
-    max-width: 520px;
+  .login-container {
+    max-width: 480px;
     width: 100%;
     z-index: 1;
   }
   
-  .register-card {
+  .login-card {
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(10px);
     border-radius: 24px;
@@ -55,12 +55,12 @@
     transition: transform 0.3s, box-shadow 0.3s;
   }
   
-  .register-card:hover {
+  .login-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
   }
   
-  .register-header {
+  .login-header {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     text-align: center;
@@ -68,7 +68,7 @@
     position: relative;
   }
   
-  .register-header::before {
+  .login-header::before {
     content: '';
     position: absolute;
     top: 0;
@@ -80,30 +80,30 @@
     opacity: 0.3;
   }
   
-  .register-icon {
+  .login-icon {
     font-size: 64px;
     margin-bottom: 15px;
     display: inline-block;
     animation: float 3s ease-in-out infinite;
   }
   
-  .register-header h2 {
+  .login-header h2 {
     font-size: 32px;
     margin-bottom: 8px;
     font-weight: 700;
   }
   
-  .register-header p {
+  .login-header p {
     font-size: 14px;
     opacity: 0.9;
   }
   
-  .register-body {
+  .login-body {
     padding: 40px 30px;
   }
   
   .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     position: relative;
   }
   
@@ -140,59 +140,43 @@
     font-size: 18px;
   }
   
-  /* Password strength indicator */
-  .password-strength {
-    margin-top: 8px;
-    font-size: 12px;
-  }
-  
-  .strength-bar {
-    height: 4px;
-    background: #e0e0e0;
-    border-radius: 2px;
-    margin-top: 8px;
-    overflow: hidden;
-  }
-  
-  .strength-bar-fill {
-    height: 100%;
-    width: 0%;
-    transition: width 0.3s, background 0.3s;
-    border-radius: 2px;
-  }
-  
-  .terms {
-    margin: 25px 0;
-  }
-  
-  .terms label {
+  .form-options {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.5;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
   }
   
-  .terms input {
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  
+  .checkbox input {
     width: 18px;
     height: 18px;
-    margin-top: 2px;
     cursor: pointer;
     accent-color: var(--primary);
   }
   
-  .terms a {
+  .forgot-link {
     color: var(--primary);
     text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s;
   }
   
-  .terms a:hover {
+  .forgot-link:hover {
+    color: var(--primary-dark);
     text-decoration: underline;
   }
   
-  .register-btn-modern {
+  .login-btn-modern {
     width: 100%;
     padding: 14px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -207,7 +191,7 @@
     margin-bottom: 20px;
   }
   
-  .register-btn-modern:hover {
+  .login-btn-modern:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(45, 90, 61, 0.3);
   }
@@ -236,7 +220,7 @@
     font-size: 14px;
   }
   
-  .social-register {
+  .social-login {
     display: flex;
     gap: 15px;
     margin-bottom: 25px;
@@ -249,33 +233,72 @@
     border-radius: 12px;
     background: white;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 500;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+    font-family: 'DM Sans', sans-serif;
   }
   
-  .social-btn:hover {
-    background: var(--bg);
-    border-color: var(--primary);
+  .social-btn i {
+    font-size: 18px;
+  }
+  
+  /* Google Button */
+  .google-btn {
+    background: white;
+    border-color: #db4437;
+    color: #db4437;
+  }
+  
+  .google-btn i {
+    color: #db4437;
+  }
+  
+  .google-btn:hover {
+    background: #db4437;
+    border-color: #db4437;
+    color: white;
     transform: translateY(-2px);
   }
   
-  .login-link {
+  .google-btn:hover i {
+    color: white;
+  }
+  
+  /* Facebook Button */
+  .facebook-btn {
+    background: #1877f2;
+    border-color: #1877f2;
+    color: white;
+  }
+  
+  .facebook-btn i {
+    color: white;
+  }
+  
+  .facebook-btn:hover {
+    background: #166fe5;
+    border-color: #166fe5;
+    transform: translateY(-2px);
+  }
+  
+  .register-link {
     text-align: center;
     color: var(--muted);
     font-size: 14px;
   }
   
-  .login-link a {
+  .register-link a {
     color: var(--primary);
     text-decoration: none;
     font-weight: 600;
   }
   
-  .login-link a:hover {
+  .register-link a:hover {
     text-decoration: underline;
   }
   
@@ -285,143 +308,85 @@
   }
   
   @media (max-width: 768px) {
-    .register-body {
+    .login-body {
       padding: 30px 20px;
     }
     
-    .register-header {
+    .login-header {
       padding: 30px 20px;
     }
     
-    .register-header h2 {
+    .login-header h2 {
       font-size: 28px;
     }
     
-    .social-register {
+    .social-login {
       flex-direction: column;
+    }
+    
+    .social-btn {
+      width: 100%;
     }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="register-page">
-  <div class="register-container">
-    <div class="register-card">
-      <div class="register-header">
-        <div class="register-icon">🎉</div>
-        <h2>Join Our Community!</h2>
-        <p>Create an account and get 10% off your first order</p>
+<div class="login-page">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-icon">☕</div>
+        <h2>Welcome Back!</h2>
+        <p>Sign in to continue your coffee journey</p>
       </div>
       
-      <div class="register-body">
-        <form method="post" id="registerForm">
+      <div class="login-body">
+        <form method="post">
           {% csrf_token %}
           
           <div class="input-group">
-            <label>Full Name</label>
-            <input type="text" name="fullname" placeholder="Enter your full name" required>
-            <span class="input-icon">👤</span>
-          </div>
-          
-          <div class="input-group">
-            <label>Email Address</label>
-            <input type="email" name="email" placeholder="Enter your email" required>
+            <label>Email or Username</label>
+            <input type="text" name="username" placeholder="Enter your email or username" required>
             <span class="input-icon">📧</span>
           </div>
           
           <div class="input-group">
-            <label>Username</label>
-            <input type="text" name="username" placeholder="Choose a username" required>
-            <span class="input-icon">@</span>
-          </div>
-          
-          <div class="input-group">
             <label>Password</label>
-            <input type="password" name="password" id="password" placeholder="Create a password" required>
+            <input type="password" name="password" placeholder="Enter your password" required>
             <span class="input-icon">🔒</span>
-            <div class="password-strength">
-              <div class="strength-bar">
-                <div class="strength-bar-fill" id="strengthFill"></div>
-              </div>
-            </div>
           </div>
           
-          <div class="input-group">
-            <label>Confirm Password</label>
-            <input type="password" name="confirm_password" placeholder="Confirm your password" required>
-            <span class="input-icon">✓</span>
-          </div>
-          
-          <div class="terms">
-            <label>
-              <input type="checkbox" name="terms" required>
-              <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+          <div class="form-options">
+            <label class="checkbox">
+              <input type="checkbox" name="remember"> Remember me
             </label>
+            <a href="#" class="forgot-link">Forgot Password?</a>
           </div>
           
-          <button type="submit" class="register-btn-modern">
-            Create Account 🎉
+          <button type="submit" class="login-btn-modern">
+            Sign In ☕
           </button>
         </form>
         
         <div class="divider">
-          <span>Or sign up with</span>
+          <span>Or continue with</span>
         </div>
         
-        <div class="social-register">
-          <button class="social-btn" onclick="alert('Google sign up coming soon!')">
-            🍎 Google
+        <div class="social-login">
+          <button class="social-btn google-btn" onclick="alert('Google login coming soon!')">
+            <i class="fab fa-google"></i> Google
           </button>
-          <button class="social-btn" onclick="alert('Facebook sign up coming soon!')">
-            📘 Facebook
+          <button class="social-btn facebook-btn" onclick="alert('Facebook login coming soon!')">
+            <i class="fab fa-facebook-f"></i> Facebook
           </button>
         </div>
         
-        <div class="login-link">
-          Already have an account? <a href="/accounts/login/">Sign in</a>
+        <div class="register-link">
+          New to Coffee & Tea Shop? <a href="/accounts/register/">Create an account</a>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<script>
-  // Password strength checker
-  const passwordInput = document.getElementById('password');
-  const strengthFill = document.getElementById('strengthFill');
-  
-  passwordInput.addEventListener('input', function() {
-    const password = this.value;
-    let strength = 0;
-    
-    if (password.length >= 6) strength++;
-    if (password.length >= 10) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    
-    const percentage = (strength / 5) * 100;
-    strengthFill.style.width = percentage + '%';
-    
-    if (strength <= 2) {
-      strengthFill.style.background = '#dc3545';
-    } else if (strength <= 3) {
-      strengthFill.style.background = '#ffc107';
-    } else {
-      strengthFill.style.background = '#28a745';
-    }
-  });
-  
-  // Form validation
-  document.getElementById('registerForm').addEventListener('submit', function(e) {
-    const password = document.querySelector('[name="password"]').value;
-    const confirm = document.querySelector('[name="confirm_password"]').value;
-    
-    if (password !== confirm) {
-      e.preventDefault();
-      alert('Passwords do not match!');
-    }
-  });
-</script>
 {% endblock %}
