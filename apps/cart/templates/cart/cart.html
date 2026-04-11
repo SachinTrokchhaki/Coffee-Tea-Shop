@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<section class="page-hero small-hero">
+  <div class="container">
+    <h1>Shopping Cart</h1>
+    <p>Review your items</p>
+  </div>
+</section>
+
+<section class="cart-page">
+  <div class="container">
+    <div class="empty-cart">
+      <div class="empty-cart-icon">🛒</div>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added any items yet</p>
+      <a href="/products/" class="hero-btn primary-btn">Browse Products</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cart-page {
+    padding: 80px 20px;
+    min-height: 60vh;
+    background: var(--bg);
+  }
+  .empty-cart {
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .empty-cart-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+  .empty-cart h2 {
+    margin-bottom: 1rem;
+  }
+  .empty-cart p {
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+</style>
+{% endblock %}

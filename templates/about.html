@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us{% endblock %}
+
+{% block about_active %}active{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>About Us</h1>
+    <p>Our story and passion for coffee & tea</p>
+  </div>
+</section>
+
+<section class="about-content-page">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>Our Journey</h2>
+        <p>Founded in 2024, Coffee & Tea Shop began with a simple mission: to bring the finest handcrafted beverages to our community.</p>
+        
+        <h2>Our Philosophy</h2>
+        <p>We believe that every cup tells a story. From farmer to barista, we honor every step of the journey.</p>
+        
+        <h2>Quality Commitment</h2>
+        <p>We source our beans and leaves directly from sustainable farms around the world.</p>
+        
+        <h2>Community First</h2>
+        <p>More than just a coffee shop, we're a gathering place for our community.</p>
+      </div>
+      <div class="about-image-side">
+        <img src="{% static 'images/about-coffee.jpg' %}" alt="Coffee Shop" onerror="this.src='https://placehold.co/500x600/2d5a3d/white?text=Our+Coffee+Shop'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="values-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-subtitle">Our Core Values</span>
+      <h2>What Drives Us</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card"><div class="value-icon">🌱</div><h3>Sustainability</h3><p>Eco-friendly practices</p></div>
+      <div class="value-card"><div class="value-icon">🤝</div><h3>Community</h3><p>Building connections</p></div>
+      <div class="value-card"><div class="value-icon">⭐</div><h3>Quality</h3><p>Never compromising</p></div>
+      <div class="value-card"><div class="value-icon">❤️</div><h3>Passion</h3><p>Loving what we do</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Products{% endblock %}
+
+{% block products_active %}active{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>Our Products</h1>
+    <p>Discover our handcrafted coffee and tea selection</p>
+  </div>
+</section>
+
+<section class="products-page">
+  <div class="container">
+    <div class="menu-grid" id="productsGrid">
+      <!-- Products will be loaded here -->
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const products = [
+    { id: 1, name: "Black Tea", description: "A classic tea with rich flavor.", price: 260, image: "{% static 'images/black-tea.jpg' %}", badge: "Bestseller" },
+    { id: 2, name: "Black Coffee", description: "A bold and smooth black coffee.", price: 390, image: "{% static 'images/black-coffee.jpg' %}" },
+    { id: 3, name: "Milk Coffee", description: "A smooth blend of coffee and milk.", price: 520, image: "{% static 'images/milk-coffee.jpg' %}", badge: "New" },
+    { id: 4, name: "Green Tea", description: "A refreshing tea with mild taste.", price: 325, image: "{% static 'images/green-tea.jpg' %}" },
+    { id: 5, name: "Espresso", description: "Strong and intense shot of coffee.", price: 280, image: "{% static 'images/espresso.jpg' %}" },
+    { id: 6, name: "Chai Latte", description: "Spiced tea with steamed milk.", price: 350, image: "{% static 'images/chai-latte.jpg' %}", badge: "Popular" }
+  ];
+
+  function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = products.map(p => `
+      <div class="product-card">
+        <div class="product-image">
+          <img src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=${p.name.replace(' ', '+')}'">
+          ${p.badge ? `<span class="product-badge ${p.badge === 'New' ? 'new' : ''}">${p.badge}</span>` : ''}
+        </div>
+        <div class="product-card-body">
+          <h3>${p.name}</h3>
+          <p class="desc">${p.description}</p>
+          <div class="product-footer">
+            <span class="price">रू ${p.price.toFixed(2)}</span>
+            <button class="add-to-cart" data-name="${p.name}">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+      btn.addEventListener('click', () => alert(`✨ ${btn.dataset.name} added to cart!`));
+    });
+  }
+  
+  renderProducts();
+</script>
+{% endblock %}s

@@ -13,3 +13,6 @@ pip install django
 
 # Create Django project
 django-admin startproject project_name("cafe_shop") 
+
+# Install Pillow for image handlingng
+pip install Pillow

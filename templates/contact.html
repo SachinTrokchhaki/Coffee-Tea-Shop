@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block contact_active %}active{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>Contact Us</h1>
+    <p>Get in touch with us</p>
+  </div>
+</section>
+
+<section class="contact-page">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h2>Visit Us</h2>
+        <p>📍 123 Coffee Street, Kathmandu, Nepal</p>
+        <p>📞 (555) 123-4567</p>
+        <p>✉️ hello@coffeetea.com</p>
+        
+        <h2>Opening Hours</h2>
+        <p>Monday - Friday: 7:00 AM - 8:00 PM</p>
+        <p>Saturday - Sunday: 8:00 AM - 9:00 PM</p>
+      </div>
+      <div class="contact-form">
+        <h2>Send us a message</h2>
+        <form>
+          <input type="text" placeholder="Your Name" class="form-input">
+          <input type="email" placeholder="Your Email" class="form-input">
+          <textarea placeholder="Your Message" rows="5" class="form-input"></textarea>
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-page {
+    padding: 80px 20px;
+    background: var(--bg);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .contact-info h2, .contact-form h2 {
+    margin-bottom: 1.5rem;
+  }
+  .contact-info p {
+    margin-bottom: 1rem;
+    color: var(--muted);
+  }
+  .form-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .submit-btn {
+    padding: 12px 30px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+  }
+  @media (max-width: 768px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>
+{% endblock %}

@@ -60,7 +60,6 @@ h1, h2, h3, h4 {
   margin-top: 4px;
 }
 
-
 .navbar {
   background: var(--bg);
   border-bottom: 1px solid var(--border);
@@ -339,6 +338,231 @@ h1, h2, h3, h4 {
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
+}
+
+
+/* ============================================ */
+/* PAGE HERO (for inner pages like About, Products) */
+/* ============================================ */
+
+.page-hero {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.page-hero p {
+  font-size: 1.125rem;
+  opacity: 0.9;
+}
+
+.page-hero.small-hero {
+  min-height: 30vh;
+  padding: 60px 20px;
+}
+
+/* ============================================ */
+/* ABOUT PAGE SPECIFIC STYLES */
+/* ============================================ */
+
+.about-content-page {
+  padding: 80px 20px;
+  background: white;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-text h2 {
+  font-size: 1.8rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--fg);
+  font-family: 'Playfair Display', serif;
+}
+
+.about-text h2:first-child {
+  margin-top: 0;
+}
+
+.about-text p {
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.about-image-side img {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s;
+}
+
+.about-image-side img:hover {
+  transform: scale(1.02);
+}
+
+/* Values Section */
+.values-section {
+  padding: 80px 20px;
+  background: var(--bg);
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 3rem auto 0;
+}
+
+.value-card {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
+}
+
+.value-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+}
+
+.value-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.value-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.value-card p {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ============================================ */
+/* PRODUCTS PAGE STYLES */
+/* ============================================ */
+
+.products-page {
+  padding: 80px 20px;
+  background: var(--bg);
+}
+
+/* ============================================ */
+/* ANIMATIONS FOR VALUE CARDS */
+/* ============================================ */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.value-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.value-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.value-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.value-card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+/* ============================================ */
+/* RESPONSIVE STYLES FOR ABOUT PAGE */
+/* ============================================ */
+
+@media (max-width: 968px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .about-image-side {
+    order: -1;
+  }
+  
+  .values-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .page-hero p {
+    font-size: 1rem;
+  }
+  
+  .about-content-page {
+    padding: 50px 20px;
+  }
+  
+  .about-text h2 {
+    font-size: 1.5rem;
+  }
+  
+  .values-section {
+    padding: 50px 20px;
+  }
+  
+  .values-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .value-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .about-text h2 {
+    font-size: 1.3rem;
+  }
 }
 
 /* ============================================ */

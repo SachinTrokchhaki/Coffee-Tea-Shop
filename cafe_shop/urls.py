@@ -1,47 +1,36 @@
-"""
-URL configuration for cafe_shop project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import render
+from apps.accounts import views as accounts_views  # Import accounts views
 
-# Define views directly here (no circular imports)
+# Global pages
 def home_page(request):
     return render(request, 'index.html')
-
-def products_page(request):
-    return render(request, 'products.html')
 
 def about_page(request):
     return render(request, 'about.html')
 
-def login_page(request):
-    return render(request, 'login.html')
+def contact_page(request):
+    return render(request, 'contact.html')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_page, name='home'),
-    path('products/', products_page, name='products'),
     path('about/', about_page, name='about'),
-    path('login/', login_page, name='login'),
+    path('contact/', contact_page, name='contact'),
+    
+    # Direct login/logout URLs (optional - for convenience)
+    path('login/', accounts_views.login_view, name='login'),
+    path('register/', accounts_views.register_view, name='register'),
+    
+    # App-specific URLs
+    path('products/', include('apps.products.urls')),
+    path('cart/', include('apps.cart.urls')),
+    path('accounts/', include('apps.accounts.urls')),  # This gives /accounts/login/ as well
 ]
 
-# Serve static files during development
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
