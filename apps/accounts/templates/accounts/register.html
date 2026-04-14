@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Login - Coffee & Tea Shop{% endblock %}
+{% block title %}Register - Coffee & Tea Shop{% endblock %}
 
 {% block extra_css %}
 <style>
-  /* Modern Login Page Styles */
-  .login-page {
+  /* Modern Register Page Styles */
+  .register-page {
     min-height: calc(100vh - 300px);
     display: flex;
     align-items: center;
@@ -18,35 +18,35 @@
   }
   
   /* Background decoration */
-  .login-page::before {
-    content: '☕';
+  .register-page::before {
+    content: '🍃';
     position: absolute;
     font-size: 300px;
     opacity: 0.05;
     bottom: -50px;
-    right: -50px;
-    transform: rotate(-15deg);
-    pointer-events: none;
-  }
-  
-  .login-page::after {
-    content: '🍃';
-    position: absolute;
-    font-size: 200px;
-    opacity: 0.05;
-    top: -50px;
     left: -50px;
     transform: rotate(15deg);
     pointer-events: none;
   }
   
-  .login-container {
-    max-width: 480px;
+  .register-page::after {
+    content: '☕';
+    position: absolute;
+    font-size: 250px;
+    opacity: 0.05;
+    top: -50px;
+    right: -50px;
+    transform: rotate(-10deg);
+    pointer-events: none;
+  }
+  
+  .register-container {
+    max-width: 520px;
     width: 100%;
     z-index: 1;
   }
   
-  .login-card {
+  .register-card {
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(10px);
     border-radius: 24px;
@@ -55,12 +55,12 @@
     transition: transform 0.3s, box-shadow 0.3s;
   }
   
-  .login-card:hover {
+  .register-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
   }
   
-  .login-header {
+  .register-header {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     text-align: center;
@@ -68,7 +68,7 @@
     position: relative;
   }
   
-  .login-header::before {
+  .register-header::before {
     content: '';
     position: absolute;
     top: 0;
@@ -80,30 +80,30 @@
     opacity: 0.3;
   }
   
-  .login-icon {
+  .register-icon {
     font-size: 64px;
     margin-bottom: 15px;
     display: inline-block;
     animation: float 3s ease-in-out infinite;
   }
   
-  .login-header h2 {
+  .register-header h2 {
     font-size: 32px;
     margin-bottom: 8px;
     font-weight: 700;
   }
   
-  .login-header p {
+  .register-header p {
     font-size: 14px;
     opacity: 0.9;
   }
   
-  .login-body {
+  .register-body {
     padding: 40px 30px;
   }
   
   .input-group {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     position: relative;
   }
   
@@ -140,43 +140,38 @@
     font-size: 18px;
   }
   
-  .form-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+  .terms {
+    margin: 25px 0;
   }
   
-  .checkbox {
+  .terms label {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 10px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--muted);
+    line-height: 1.5;
   }
   
-  .checkbox input {
+  .terms input {
     width: 18px;
     height: 18px;
+    margin-top: 2px;
     cursor: pointer;
     accent-color: var(--primary);
   }
   
-  .forgot-link {
+  .terms a {
     color: var(--primary);
     text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: color 0.3s;
   }
   
-  .forgot-link:hover {
-    color: var(--primary-dark);
+  .terms a:hover {
     text-decoration: underline;
   }
   
-  .login-btn-modern {
+  .register-btn-modern {
     width: 100%;
     padding: 14px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -191,7 +186,7 @@
     margin-bottom: 20px;
   }
   
-  .login-btn-modern:hover {
+  .register-btn-modern:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(45, 90, 61, 0.3);
   }
@@ -220,7 +215,7 @@
     font-size: 14px;
   }
   
-  .social-login {
+  .social-register {
     display: flex;
     gap: 15px;
     margin-bottom: 25px;
@@ -286,20 +281,42 @@
     transform: translateY(-2px);
   }
   
-  .register-link {
+  .login-link {
     text-align: center;
     color: var(--muted);
     font-size: 14px;
   }
   
-  .register-link a {
+  .login-link a {
     color: var(--primary);
     text-decoration: none;
     font-weight: 600;
   }
   
-  .register-link a:hover {
+  .login-link a:hover {
     text-decoration: underline;
+  }
+  
+  /* Django form error styling */
+  .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+    font-size: 12px;
+    color: #dc2626;
+  }
+  
+  .errorlist li {
+    margin-bottom: 3px;
+  }
+  
+  .field-error input {
+    border-color: #dc2626;
+  }
+  
+  .field-error input:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
   }
   
   @keyframes float {
@@ -308,19 +325,19 @@
   }
   
   @media (max-width: 768px) {
-    .login-body {
+    .register-body {
       padding: 30px 20px;
     }
     
-    .login-header {
+    .register-header {
       padding: 30px 20px;
     }
     
-    .login-header h2 {
+    .register-header h2 {
       font-size: 28px;
     }
     
-    .social-login {
+    .social-register {
       flex-direction: column;
     }
     
@@ -332,58 +349,97 @@
 {% endblock %}
 
 {% block content %}
-<div class="login-page">
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="login-icon">☕</div>
-        <h2>Welcome Back!</h2>
-        <p>Sign in to continue your coffee journey</p>
+<div class="register-page">
+  <div class="register-container">
+    <div class="register-card">
+      <div class="register-header">
+        <div class="register-icon">🎉</div>
+        <h2>Join Our Community!</h2>
+        <p>Create an account and get 10% off your first order</p>
       </div>
       
-      <div class="login-body">
+      <div class="register-body">
         <form method="post">
           {% csrf_token %}
           
-          <div class="input-group">
-            <label>Email or Username</label>
-            <input type="text" name="username" placeholder="Enter your email or username" required>
+          <!-- Full Name -->
+          <div class="input-group {% if form.fullname.errors %}field-error{% endif %}">
+            <label>Full Name</label>
+            <input type="text" name="fullname" value="{{ form.fullname.value|default:'' }}" placeholder="Enter your full name" required>
+            <span class="input-icon">👤</span>
+            {% if form.fullname.errors %}
+              {{ form.fullname.errors }}
+            {% endif %}
+          </div>
+          
+          <!-- Email Address -->
+          <div class="input-group {% if form.email.errors %}field-error{% endif %}">
+            <label>Email Address</label>
+            <input type="email" name="email" value="{{ form.email.value|default:'' }}" placeholder="Enter your email" required>
             <span class="input-icon">📧</span>
+            {% if form.email.errors %}
+              {{ form.email.errors }}
+            {% endif %}
           </div>
           
-          <div class="input-group">
+          <!-- Username -->
+          <div class="input-group {% if form.username.errors %}field-error{% endif %}">
+            <label>Username</label>
+            <input type="text" name="username" value="{{ form.username.value|default:'' }}" placeholder="Choose a username" required>
+            <span class="input-icon">@</span>
+            {% if form.username.errors %}
+              {{ form.username.errors }}
+            {% endif %}
+          </div>
+          
+          <!-- Password -->
+          <div class="input-group {% if form.password.errors %}field-error{% endif %}">
             <label>Password</label>
-            <input type="password" name="password" placeholder="Enter your password" required>
+            <input type="password" name="password" placeholder="Create a password" required>
             <span class="input-icon">🔒</span>
+            {% if form.password.errors %}
+              {{ form.password.errors }}
+            {% endif %}
           </div>
           
-          <div class="form-options">
-            <label class="checkbox">
-              <input type="checkbox" name="remember"> Remember me
+          <!-- Confirm Password -->
+          <div class="input-group {% if form.confirm_password.errors %}field-error{% endif %}">
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+            <span class="input-icon">✓</span>
+            {% if form.confirm_password.errors %}
+              {{ form.confirm_password.errors }}
+            {% endif %}
+          </div>
+          
+          <!-- Terms and Conditions -->
+          <div class="terms">
+            <label>
+              <input type="checkbox" name="terms" required>
+              <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
             </label>
-            <a href="#" class="forgot-link">Forgot Password?</a>
           </div>
           
-          <button type="submit" class="login-btn-modern">
-            Sign In ☕
+          <button type="submit" class="register-btn-modern">
+            Create Account 🎉
           </button>
         </form>
         
         <div class="divider">
-          <span>Or continue with</span>
+          <span>Or sign up with</span>
         </div>
         
-        <div class="social-login">
-          <button class="social-btn google-btn" onclick="alert('Google login coming soon!')">
+        <div class="social-register">
+          <button type="button" class="social-btn google-btn" onclick="alert('Google sign up coming soon!')">
             <i class="fab fa-google"></i> Google
           </button>
-          <button class="social-btn facebook-btn" onclick="alert('Facebook login coming soon!')">
+          <button type="button" class="social-btn facebook-btn" onclick="alert('Facebook sign up coming soon!')">
             <i class="fab fa-facebook-f"></i> Facebook
           </button>
         </div>
         
-        <div class="register-link">
-          New to Coffee & Tea Shop? <a href="/accounts/register/">Create an account</a>
+        <div class="login-link">
+          Already have an account? <a href="/accounts/login/">Sign in</a>
         </div>
       </div>
     </div>

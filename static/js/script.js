@@ -95,3 +95,73 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Profile Dropdown Toggle
+function toggleDropdown(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  const menu = document.getElementById('dropdownMenu');
+  const toggle = document.getElementById('userDropdown');
+  
+  if (menu) {
+    menu.classList.toggle('show');
+    if (toggle) toggle.classList.toggle('active');
+  }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+  const dropdown = document.querySelector('.dropdown');
+  const menu = document.getElementById('dropdownMenu');
+  const toggle = document.getElementById('userDropdown');
+  
+  if (dropdown && menu && !dropdown.contains(event.target)) {
+    menu.classList.remove('show');
+    if (toggle) toggle.classList.remove('active');
+  }
+});
+
+// Mobile menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const closeMenuBtn = document.getElementById('closeMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('overlay');
+  
+  if (hamburgerBtn) {
+    hamburgerBtn.addEventListener('click', function() {
+      mobileMenu.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+  
+  if (closeMenuBtn) {
+    closeMenuBtn.addEventListener('click', function() {
+      mobileMenu.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  }
+  
+  if (overlay) {
+    overlay.addEventListener('click', function() {
+      mobileMenu.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  }
+  
+  // Close mobile menu when clicking on links
+  const mobileLinks = document.querySelectorAll('.mobile-menu-links a');
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      mobileMenu.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+  
+  console.log('Coffee & Tea Shop Website Loaded! ☕');
+});

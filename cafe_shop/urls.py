@@ -3,9 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import render
-from apps.accounts import views as accounts_views  # Import accounts views
 
-# Global pages
 def home_page(request):
     return render(request, 'index.html')
 
@@ -21,14 +19,10 @@ urlpatterns = [
     path('about/', about_page, name='about'),
     path('contact/', contact_page, name='contact'),
     
-    # Direct login/logout URLs (optional - for convenience)
-    path('login/', accounts_views.login_view, name='login'),
-    path('register/', accounts_views.register_view, name='register'),
-    
-    # App-specific URLs
+    # App URLs
     path('products/', include('apps.products.urls')),
     path('cart/', include('apps.cart.urls')),
-    path('accounts/', include('apps.accounts.urls')),  # This gives /accounts/login/ as well
+    path('accounts/', include('apps.accounts.urls')),
 ]
 
 if settings.DEBUG:

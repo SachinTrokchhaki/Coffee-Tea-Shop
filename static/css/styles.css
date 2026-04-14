@@ -237,6 +237,196 @@ h1, h2, h3, h4 {
 }
 
 /* ============================================ */
+/* PROFILE DROPDOWN MENU STYLES */
+/* ============================================ */
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 40px;
+  transition: all 0.3s;
+  text-decoration: none;
+  color: var(--fg);
+}
+
+.dropdown-toggle:hover {
+  background: var(--bg);
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar i {
+  font-size: 28px;
+  color: var(--primary);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.dropdown-toggle i.fa-chevron-down {
+  font-size: 12px;
+  color: var(--muted);
+  transition: transform 0.3s;
+}
+
+.dropdown-toggle.active i.fa-chevron-down {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 220px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  margin-top: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s;
+  z-index: 1000;
+  list-style: none;
+}
+
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu li {
+  list-style: none;
+}
+
+.dropdown-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.dropdown-menu a:hover {
+  background: var(--bg);
+  color: var(--primary);
+}
+
+.dropdown-menu a i {
+  width: 20px;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.dropdown-menu a:hover i {
+  color: var(--primary);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+
+/* Register button */
+.register-btn {
+  padding: 0.5rem 1.25rem;
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary) !important;
+  border-radius: 25px;
+  transition: all 0.3s;
+}
+
+.register-btn:hover {
+  background: var(--primary);
+  color: white !important;
+}
+
+/* Cart count badge */
+.cart-count {
+  display: inline-block;
+  background: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 11px;
+  margin-left: 5px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.mobile-cart {
+  position: relative;
+  text-decoration: none;
+  color: var(--fg);
+  font-size: 1.2rem;
+}
+
+.mobile-icons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.mobile-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 0;
+}
+
+/* Responsive dropdown */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    position: static;
+    box-shadow: none;
+    background: var(--bg);
+    margin-top: 0;
+    padding-left: 20px;
+  }
+  
+  .dropdown-menu a {
+    padding: 10px 0 10px 20px;
+  }
+  
+  .dropdown-toggle {
+    display: none;
+  }
+}
+
+
+
+/* ============================================ */
 /* HERO SECTION */
 /* ============================================ */
 
