@@ -1,18 +1,122 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Our Products{% endblock %}
+{% block title %}Our Products - Coffee & Tea Shop{% endblock %}
 
 {% block products_active %}active{% endblock %}
 
+{% block extra_css %}
+<style>
+  /* Additional styles specific to products page */
+  .category-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--primary-light);
+    color: white;
+    font-size: 0.7rem;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  
+  .no-products {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    grid-column: 1 / -1;
+  }
+  
+  .no-products i {
+    font-size: 4rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  
+  .no-products p {
+    color: var(--muted);
+  }
+  
+  /* Products Hero with Background Image */
+  .products-hero {
+    position: relative;
+    background-image: url('{% static "images/product.png" %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+  }
+  
+  /* Dark overlay */
+  .products-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.75) 0%,
+      rgba(0, 0, 0, 0.6) 50%,
+      rgba(0, 0, 0, 0.75) 100%
+    );
+    z-index: 1;
+  }
+  
+  /* Content on top of overlay */
+  .products-hero .container {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .products-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .products-hero p {
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    .products-hero {
+      min-height: 300px;
+    }
+    
+    .products-hero h1 {
+      font-size: 2rem;
+    }
+    
+    .products-hero p {
+      font-size: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .products-hero h1 {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="page-hero">
+<!-- Hero Section with Dark Overlay -->
+<section class="products-hero">
   <div class="container">
     <h1>Our Products</h1>
     <p>Discover our handcrafted coffee and tea selection</p>
   </div>
 </section>
 
+<!-- Products Grid Section -->
 <section class="products-page">
   <div class="container">
     <div class="menu-grid">
@@ -27,25 +131,30 @@
           {% if product.featured %}
             <span class="product-badge">Featured</span>
           {% endif %}
+          {% if product.is_new %}
+            <span class="product-badge new">New</span>
+          {% endif %}
         </div>
         <div class="product-card-body">
-          <h3>{{ product.name }}</h3>
           {% if product.category %}
-            <p class="category">{{ product.category.name }}</p>
+            <span class="category-badge">{{ product.category.name }}</span>
           {% endif %}
+          <h3>{{ product.name }}</h3>
           <p class="desc">{{ product.description|truncatewords:15 }}</p>
           <div class="product-footer">
             <span class="price">रू {{ product.price|floatformat:2 }}</span>
             <button class="add-to-cart" 
                     data-product-id="{{ product.id }}"
-                    data-product-name="{{ product.name }}">
-              Add to Cart
+                    data-product-name="{{ product.name }}"
+                    data-product-price="{{ product.price }}">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
             </button>
           </div>
         </div>
       </div>
       {% empty %}
       <div class="no-products">
+        <i class="fas fa-coffee"></i>
         <p>No products available at the moment. Please check back later!</p>
       </div>
       {% endfor %}
@@ -56,12 +165,36 @@
 
 {% block extra_js %}
 <script>
+  // Add to cart functionality
   document.querySelectorAll('.add-to-cart').forEach(btn => {
     btn.addEventListener('click', function() {
+      const productId = this.dataset.productId;
       const productName = this.dataset.productName;
-      // You can replace this with actual cart functionality
-      alert(`✨ ${productName} added to cart!`);
+      const productPrice = this.dataset.productPrice;
+      
+      // Show notification
+      showNotification(`${productName} added to cart! 🛒`);
+      
+      // You can add AJAX call here to add to cart
+      console.log(`Added to cart: ${productName} (ID: ${productId}) - रू ${productPrice}`);
     });
   });
+  
+  // Notification function
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'cart-notification';
+    notification.innerHTML = `
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.remove();
+    }, 2000);
+  }
 </script>
 {% endblock %}

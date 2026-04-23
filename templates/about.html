@@ -5,8 +5,75 @@
 
 {% block about_active %}active{% endblock %}
 
+{% block extra_css %}
+<style>
+  /* About Hero with Background Image */
+  .about-hero {
+    position: relative;
+    background-image: url('{% static "images/about.png" %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+  }
+  
+  /* Dark overlay */
+  .about-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.5) 50%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+    z-index: 1;
+  }
+  
+  /* Content on top of overlay */
+  .about-hero .container {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .about-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .about-hero p {
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    .about-hero {
+      min-height: 300px;
+    }
+    
+    .about-hero h1 {
+      font-size: 2rem;
+    }
+    
+    .about-hero p {
+      font-size: 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="page-hero">
+<section class="about-hero">
   <div class="container">
     <h1>About Us</h1>
     <p>Our story and passion for coffee & tea</p>
@@ -30,7 +97,7 @@
         <p>More than just a coffee shop, we're a gathering place for our community.</p>
       </div>
       <div class="about-image-side">
-        <img src="{% static 'images/about-coffee.jpg' %}" alt="Coffee Shop" onerror="this.src='https://placehold.co/500x600/2d5a3d/white?text=Our+Coffee+Shop'">
+        <img src="{% static 'images/shop.png' %}" alt="Coffee Shop" onerror="this.src='https://placehold.co/500x600/2d5a3d/white?text=Our+Coffee+Shop'">
       </div>
     </div>
   </div>
