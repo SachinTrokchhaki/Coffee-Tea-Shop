@@ -3,9 +3,17 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import render
+from apps.products.models import Product  # Import Product model
 
 def home_page(request):
-    return render(request, 'index.html')
+    # Get all available products for the menu section
+    products = Product.objects.filter(is_available=True)[:4]  # Show first 4 products
+    total_products = Product.objects.filter(is_available=True).count()
+    
+    return render(request, 'index.html', {
+        'products': products,
+        'total_products': total_products
+    })
 
 def about_page(request):
     return render(request, 'about.html')

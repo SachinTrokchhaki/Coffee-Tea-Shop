@@ -59,19 +59,18 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s Profile"
 
 
-# Signal to auto-create profile when user registers
+# Signal to auto-create and manage profile when user is saved
 @receiver(post_save, sender=CustomUser)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_or_save_user_profile(sender, instance, created, **kwargs):
     """
-    Automatically creates a UserProfile when a new user is created
+    Automatically creates a UserProfile when a new user is created,
+    and ensures profile exists when existing users are saved
     """
     if created:
+        # For new users, create profile
         UserProfile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=CustomUser)
-def save_user_profile(sender, instance, **kwargs):
-    """
-    Automatically saves the UserProfile when user is saved
-    """
-    instance.profile.save()
+    else:
+        # For existing users, ensure profile exists
+        profile, created = UserProfile.objects.get_or_create(user=instance)
+        if not created:
+            profile.save()

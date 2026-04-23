@@ -61,69 +61,40 @@
       <p>Discover our most loved coffee and tea selections</p>
     </div>
     <div class="menu-grid">
-      
-      <!-- Product 1 - Black Tea -->
+      {% for product in products %}
       <div class="product-card">
         <div class="product-image">
-          <img src="{% static 'images/black-tea.jpg' %}" alt="Black Tea" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=Black+Tea'">
-          <span class="product-badge">Bestseller</span>
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.name }}" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text={{ product.name|urlencode }}'">
+          {% endif %}
+          {% if product.featured %}
+            <span class="product-badge">Featured</span>
+          {% elif forloop.counter == 1 %}
+            <span class="product-badge">Bestseller</span>
+          {% endif %}
         </div>
         <div class="product-card-body">
-          <h3>Black Tea</h3>
-          <p class="desc">A classic tea with a rich, robust flavor. Perfect for any time of day.</p>
+          <h3>{{ product.name }}</h3>
+          {% if product.category %}
+            <span class="category-label">{{ product.category.name }}</span>
+          {% endif %}
+          <p class="desc">{{ product.description|truncatewords:15 }}</p>
           <div class="product-footer">
-            <span class="price">रू 260.00</span>
-            <button class="add-to-cart">Add to Cart</button>
+            <span class="price">रू {{ product.price|floatformat:2 }}</span>
+            <button class="add-to-cart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+              Add to Cart
+            </button>
           </div>
         </div>
       </div>
-
-      <!-- Product 2 - Black Coffee -->
-      <div class="product-card">
-        <div class="product-image">
-          <img src="{% static 'images/black-coffee.jpg' %}" alt="Black Coffee" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=Black+Coffee'">
-        </div>
-        <div class="product-card-body">
-          <h3>Black Coffee</h3>
-          <p class="desc">A bold and smooth black coffee made from 100% Arabica beans.</p>
-          <div class="product-footer">
-            <span class="price">रू 390.00</span>
-            <button class="add-to-cart">Add to Cart</button>
-          </div>
-        </div>
+      {% empty %}
+      <div class="no-products-message">
+        <p>No products available at the moment. Please check back later!</p>
+        <p>👨‍💼 Admin: <a href="/admin/products/product/add/">Add products here</a></p>
       </div>
-
-      <!-- Product 3 - Milk Coffee -->
-      <div class="product-card">
-        <div class="product-image">
-          <img src="{% static 'images/milk-coffee.jpg' %}" alt="Milk Coffee" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=Milk+Coffee'">
-          <span class="product-badge new">New</span>
-        </div>
-        <div class="product-card-body">
-          <h3>Milk Coffee</h3>
-          <p class="desc">A smooth blend of coffee and milk with a creamy texture.</p>
-          <div class="product-footer">
-            <span class="price">रू 520.00</span>
-            <button class="add-to-cart">Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product 4 - Green Tea -->
-      <div class="product-card">
-        <div class="product-image">
-          <img src="{% static 'images/green-tea.jpg' %}" alt="Green Tea" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text=Green+Tea'">
-        </div>
-        <div class="product-card-body">
-          <h3>Green Tea</h3>
-          <p class="desc">A refreshing tea with a mild, grassy taste. Rich in antioxidants.</p>
-          <div class="product-footer">
-            <span class="price">रू 325.00</span>
-            <button class="add-to-cart">Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
+      {% endfor %}
     </div>
   </div>
 </section>
@@ -141,7 +112,7 @@
         <p>Founded in 2024, our passion for exceptional coffee and tea drives us to source the finest beans and leaves from sustainable farms worldwide.</p>
         <div class="about-stats">
           <div class="stat">
-            <span class="stat-number">50+</span>
+            <span class="stat-number">{{ total_products|default:"50+" }}</span>
             <span class="stat-label">Products</span>
           </div>
           <div class="stat">
@@ -191,11 +162,37 @@
     }
   }
   
-  // Add to cart buttons (static alert)
+  // Add to cart functionality - Dynamic
   document.querySelectorAll('.add-to-cart').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
-      alert('✨ Item added to cart! (Demo version)');
+      const productName = this.dataset.productName;
+      const productId = this.dataset.productId;
+      
+      // Show alert (you can replace with actual cart AJAX later)
+      alert(`✨ ${productName} added to cart!`);
+      
+      // For actual cart functionality, uncomment this:
+      /*
+      fetch('/cart/add/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          quantity: 1
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(`✨ ${productName} added to cart!`);
+          updateCartCount(data.cart_count);
+        }
+      });
+      */
     });
   });
   
@@ -210,6 +207,22 @@
         this.reset();
       }
     });
+  }
+  
+  // Helper function to get CSRF token (if needed for cart)
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
   }
 </script>
 {% endblock %}
