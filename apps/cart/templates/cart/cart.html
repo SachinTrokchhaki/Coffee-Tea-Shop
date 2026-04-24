@@ -1,48 +1,674 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Shopping Cart{% endblock %}
+{% block title %}Shopping Cart - Coffee & Tea Shop{% endblock %}
 
-{% block content %}
-<section class="page-hero small-hero">
-  <div class="container">
-    <h1>Shopping Cart</h1>
-    <p>Review your items</p>
-  </div>
-</section>
-
-<section class="cart-page">
-  <div class="container">
-    <div class="empty-cart">
-      <div class="empty-cart-icon">🛒</div>
-      <h2>Your cart is empty</h2>
-      <p>Looks like you haven't added any items yet</p>
-      <a href="/products/" class="hero-btn primary-btn">Browse Products</a>
-    </div>
-  </div>
-</section>
-
+{% block extra_css %}
 <style>
   .cart-page {
     padding: 80px 20px;
-    min-height: 60vh;
     background: var(--bg);
+    min-height: calc(100vh - 300px);
   }
-  .empty-cart {
-    text-align: center;
-    max-width: 500px;
+  
+  .cart-container {
+    max-width: 1200px;
     margin: 0 auto;
   }
-  .empty-cart-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
+  
+  .cart-header {
+    text-align: center;
+    margin-bottom: 40px;
   }
+  
+  .cart-header h1 {
+    font-size: 2.5rem;
+    color: var(--fg);
+  }
+  
+  .cart-header p {
+    color: var(--muted);
+  }
+  
+  .cart-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 30px;
+  }
+  
+  /* Cart Items Table */
+  .cart-items {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .cart-table th {
+    text-align: left;
+    padding: 15px 20px;
+    background: var(--bg);
+    font-weight: 600;
+    color: var(--fg);
+  }
+  
+  .cart-table td {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  
+  .cart-product {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .cart-product-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .cart-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .cart-product-info h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+  
+  .cart-product-info .category {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  
+  .cart-price {
+    font-weight: 600;
+    color: var(--fg);
+  }
+  
+  .cart-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .quantity-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .quantity-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  .quantity-input {
+    width: 50px;
+    text-align: center;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  
+  .cart-total {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary);
+  }
+  
+  .remove-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+  }
+  
+  .remove-btn:hover {
+    color: #bd2130;
+    transform: scale(1.1);
+  }
+  
+  /* Cart Summary */
+  .cart-summary {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 100px;
+  }
+  
+  .cart-summary h3 {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+  }
+  
+  .summary-row.total {
+    border-top: 2px solid var(--border);
+    margin-top: 10px;
+    padding-top: 15px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  
+  .checkout-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 20px;
+  }
+  
+  .checkout-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  .continue-shopping {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: var(--primary);
+    text-decoration: none;
+  }
+  
+  .clear-cart-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+  }
+  
+  .clear-cart-btn:hover {
+    background: #dc3545;
+    color: white;
+  }
+  
+  /* Empty Cart */
+  .empty-cart {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  
+  .empty-cart i {
+    font-size: 5rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  
   .empty-cart h2 {
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
   }
+  
   .empty-cart p {
     color: var(--muted);
-    margin-bottom: 2rem;
+    margin-bottom: 30px;
+  }
+  
+  .shop-now-btn {
+    padding: 12px 30px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  /* Cart Notification */
+  .cart-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+  }
+  
+  .notification-content {
+    background: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+  @media (max-width: 768px) {
+    .cart-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .cart-table thead {
+      display: none;
+    }
+    
+    .cart-table tr {
+      display: block;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    
+    .cart-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+    }
+    
+    .cart-table td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      width: 100px;
+    }
+    
+    .cart-product {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .cart-summary {
+      position: static;
+    }
   }
 </style>
+{% endblock %}
+
+{% block content %}
+<section class="cart-page">
+  <div class="cart-container">
+    <div class="cart-header">
+      <h1>Shopping Cart</h1>
+      <p>Review and manage your items</p>
+    </div>
+    
+    {% if cart_items %}
+    <div class="cart-grid">
+      <!-- Cart Items -->
+      <div class="cart-items">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cart-items-body">
+            {% for item in cart_items %}
+            <tr id="cart-item-{{ item.id }}" data-item-id="{{ item.id }}">
+              <td data-label="Product">
+                <div class="cart-product">
+                  <div class="cart-product-image">
+                    {% if item.product.image %}
+                      <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                      <img src="{% static 'images/placeholder.jpg' %}" alt="{{ item.product.name }}">
+                    {% endif %}
+                  </div>
+                  <div class="cart-product-info">
+                    <h3>{{ item.product.name }}</h3>
+                    <span class="category">{{ item.product.category.name|default:"Coffee & Tea" }}</span>
+                  </div>
+                </div>
+               </td>
+              <td data-label="Price" class="cart-price" id="price-{{ item.id }}">रू {{ item.price_at_add|floatformat:2 }}</td>
+              <td data-label="Quantity">
+                <div class="cart-quantity">
+                  <button class="quantity-btn decrease" data-item-id="{{ item.id }}">-</button>
+                  <input type="text" class="quantity-input" value="{{ item.quantity }}" readonly data-item-id="{{ item.id }}" id="qty-{{ item.id }}">
+                  <button class="quantity-btn increase" data-item-id="{{ item.id }}">+</button>
+                </div>
+              </td>
+              <td data-label="Total" class="cart-total" id="total-{{ item.id }}">रू {{ item.get_total_price|floatformat:2 }}</td>
+              <td data-label="">
+                <button class="remove-btn" data-item-id="{{ item.id }}" title="Remove">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Cart Summary -->
+      <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <div class="summary-row">
+          <span>Subtotal (<span id="item-count">{{ total_items }}</span> items)</span>
+          <span id="subtotal">रू {{ total_price|floatformat:2 }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Delivery Fee</span>
+          <span>रू 0.00</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="total-amount">रू {{ total_price|floatformat:2 }}</span>
+        </div>
+        <button class="checkout-btn" onclick="window.location.href='{% url 'cart:checkout' %}'">
+          Proceed to Checkout 🛒
+        </button>
+        <button class="clear-cart-btn" id="clearCartBtn">
+          Clear Cart 🗑️
+        </button>
+        <a href="/products/" class="continue-shopping">← Continue Shopping</a>
+      </div>
+    </div>
+    {% else %}
+    <!-- Empty Cart -->
+    <div class="empty-cart">
+      <i class="fas fa-shopping-cart"></i>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added any items yet</p>
+      <a href="/products/" class="shop-now-btn">Browse Products ☕</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Get CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  
+  const csrftoken = getCookie('csrftoken');
+  
+  // Show notification
+  function showNotification(message, isError = false) {
+    const notification = document.createElement('div');
+    notification.className = 'cart-notification';
+    notification.innerHTML = `
+      <div class="notification-content" style="background: ${isError ? '#dc3545' : 'var(--primary)'}">
+        <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.remove();
+    }, 2000);
+  }
+  
+  // Update cart count in navbar
+  function updateCartCount(count) {
+    const desktopCount = document.getElementById('cartCountDesktop');
+    const mobileCount = document.getElementById('cartCountMobile');
+    
+    if (desktopCount) {
+      desktopCount.innerText = count;
+      if (count === 0) desktopCount.style.display = 'none';
+      else desktopCount.style.display = 'inline-block';
+    }
+    
+    if (mobileCount) {
+      mobileCount.innerText = count;
+      if (count === 0) mobileCount.style.display = 'none';
+      else mobileCount.style.display = 'inline-block';
+    }
+  }
+  
+  // Update quantity
+  function updateQuantity(itemId, newQuantity) {
+    if (newQuantity < 1) return;
+    
+    // Show loading state
+    const row = document.getElementById(`cart-item-${itemId}`);
+    if (row) row.classList.add('loading');
+    
+    fetch(`/cart/update/${itemId}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrftoken,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: `quantity=${newQuantity}`
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Update item quantity display
+        const qtyInput = document.getElementById(`qty-${itemId}`);
+        if (qtyInput) qtyInput.value = data.item_quantity;
+        
+        // Update item total
+        const totalSpan = document.getElementById(`total-${itemId}`);
+        if (totalSpan) totalSpan.innerText = `रू ${data.item_total}`;
+        
+        // Update subtotal and total
+        const subtotalSpan = document.getElementById('subtotal');
+        const totalAmountSpan = document.getElementById('total-amount');
+        const itemCountSpan = document.getElementById('item-count');
+        
+        if (subtotalSpan) subtotalSpan.innerText = `रू ${data.cart_total}`;
+        if (totalAmountSpan) totalAmountSpan.innerText = `रू ${data.cart_total}`;
+        if (itemCountSpan) itemCountSpan.innerText = data.cart_items;
+        
+        // Update cart count in navbar
+        updateCartCount(data.cart_items);
+        
+        // If quantity becomes 0, remove the row
+        if (data.item_quantity === 0) {
+          const row = document.getElementById(`cart-item-${itemId}`);
+          if (row) row.remove();
+          
+          // Check if cart is empty
+          const tbody = document.getElementById('cart-items-body');
+          if (tbody && tbody.children.length === 0) {
+            location.reload();
+          }
+        }
+      } else {
+        showNotification('Failed to update quantity!', true);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showNotification('Error updating cart!', true);
+    })
+    .finally(() => {
+      if (row) row.classList.remove('loading');
+    });
+  }
+  
+  // Remove item
+  function removeItem(itemId) {
+    if (!confirm('Remove this item from cart?')) return;
+    
+    const row = document.getElementById(`cart-item-${itemId}`);
+    if (row) row.classList.add('loading');
+    
+    fetch(`/cart/remove/${itemId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showNotification(data.message);
+        
+        // Remove the row
+        const row = document.getElementById(`cart-item-${itemId}`);
+        if (row) row.remove();
+        
+        // Update totals
+        const subtotalSpan = document.getElementById('subtotal');
+        const totalAmountSpan = document.getElementById('total-amount');
+        const itemCountSpan = document.getElementById('item-count');
+        
+        if (subtotalSpan) subtotalSpan.innerText = `रू ${data.cart_price}`;
+        if (totalAmountSpan) totalAmountSpan.innerText = `रू ${data.cart_price}`;
+        if (itemCountSpan) itemCountSpan.innerText = data.cart_total;
+        
+        // Update cart count in navbar
+        updateCartCount(data.cart_total);
+        
+        // Check if cart is empty
+        const tbody = document.getElementById('cart-items-body');
+        if (tbody && tbody.children.length === 0) {
+          location.reload();
+        }
+      } else {
+        showNotification('Failed to remove item!', true);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showNotification('Error removing item!', true);
+    })
+    .finally(() => {
+      if (row) row.classList.remove('loading');
+    });
+  }
+  
+  // Clear entire cart
+  function clearCart() {
+    if (!confirm('Clear entire cart? This action cannot be undone.')) return;
+    
+    const clearBtn = document.getElementById('clearCartBtn');
+    if (clearBtn) clearBtn.disabled = true;
+    
+    fetch('/cart/clear/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showNotification('Cart cleared successfully!');
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+      } else {
+        showNotification('Failed to clear cart!', true);
+        if (clearBtn) clearBtn.disabled = false;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showNotification('Error clearing cart!', true);
+      if (clearBtn) clearBtn.disabled = false;
+    });
+  }
+  
+  // Event listeners for quantity buttons
+  document.querySelectorAll('.increase').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const itemId = this.dataset.itemId;
+      const qtyInput = document.getElementById(`qty-${itemId}`);
+      let currentQty = parseInt(qtyInput.value);
+      updateQuantity(itemId, currentQty + 1);
+    });
+  });
+  
+  document.querySelectorAll('.decrease').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const itemId = this.dataset.itemId;
+      const qtyInput = document.getElementById(`qty-${itemId}`);
+      let currentQty = parseInt(qtyInput.value);
+      if (currentQty > 1) {
+        updateQuantity(itemId, currentQty - 1);
+      }
+    });
+  });
+  
+  // Remove item buttons
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const itemId = this.dataset.itemId;
+      removeItem(itemId);
+    });
+  });
+  
+  // Clear cart button
+  const clearCartBtn = document.getElementById('clearCartBtn');
+  if (clearCartBtn) {
+    clearCartBtn.addEventListener('click', clearCart);
+  }
+</script>
 {% endblock %}

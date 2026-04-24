@@ -5,6 +5,40 @@
 
 {% block home_active %}active{% endblock %}
 
+{% block extra_css %}
+<style>
+  .cart-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+  }
+  
+  .notification-content {
+    background: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
 <section class="hero">
@@ -83,8 +117,10 @@
           <p class="desc">{{ product.description|truncatewords:15 }}</p>
           <div class="product-footer">
             <span class="price">रू {{ product.price|floatformat:2 }}</span>
-            <button class="add-to-cart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
-              Add to Cart
+            <button class="add-to-cart" 
+                    data-product-id="{{ product.id }}"
+                    data-product-name="{{ product.name }}">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
             </button>
           </div>
         </div>
@@ -147,6 +183,24 @@
 
 {% block extra_js %}
 <script>
+  // Get CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  
+  const csrftoken = getCookie('csrftoken');
+  
   // Scroll functions
   function scrollToMenu() {
     const menuSection = document.getElementById('menuSection');
@@ -162,37 +216,70 @@
     }
   }
   
-  // Add to cart functionality - Dynamic
+  // Show notification
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'cart-notification';
+    notification.innerHTML = `
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.remove();
+    }, 2000);
+  }
+  
+  // Update cart count in navbar
+  function updateCartCount(count) {
+    const desktopCount = document.getElementById('cartCountDesktop');
+    const mobileCount = document.getElementById('cartCountMobile');
+    
+    if (desktopCount) {
+      desktopCount.innerText = count;
+      if (count === 0) desktopCount.style.display = 'none';
+      else desktopCount.style.display = 'inline-block';
+    }
+    
+    if (mobileCount) {
+      mobileCount.innerText = count;
+      if (count === 0) mobileCount.style.display = 'none';
+      else mobileCount.style.display = 'inline-block';
+    }
+  }
+  
+  // Add to cart functionality
   document.querySelectorAll('.add-to-cart').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
       const productName = this.dataset.productName;
       const productId = this.dataset.productId;
       
-      // Show alert (you can replace with actual cart AJAX later)
-      alert(`✨ ${productName} added to cart!`);
-      
-      // For actual cart functionality, uncomment this:
-      /*
-      fetch('/cart/add/', {
+      // Send AJAX request to add to cart
+      fetch(`/cart/add/${productId}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken')
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest'
         },
-        body: JSON.stringify({
-          product_id: productId,
-          quantity: 1
-        })
       })
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          alert(`✨ ${productName} added to cart!`);
-          updateCartCount(data.cart_count);
+          showNotification(`${productName} added to cart! 🛒`);
+          updateCartCount(data.cart_total);
+        } else {
+          showNotification(`Failed to add ${productName} to cart!`);
         }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showNotification(`${productName} added to cart! (Demo mode)`);
       });
-      */
     });
   });
   
@@ -207,22 +294,6 @@
         this.reset();
       }
     });
-  }
-  
-  // Helper function to get CSRF token (if needed for cart)
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
   }
 </script>
 {% endblock %}

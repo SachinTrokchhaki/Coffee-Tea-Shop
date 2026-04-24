@@ -48,18 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
         link.addEventListener('click', closeMenu);
     });
     
-    // Simple console message
-    console.log('Coffee & Tea Shop Website Loaded! ☕');
-    
-    // Add to cart buttons (static - just shows alert)
-    const addToCartBtns = document.querySelectorAll('.add-to-cart');
-    addToCartBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            alert('✨ Item added to cart! (Demo version)');
-        });
-    });
-    
     // View Products button
     const viewProductsBtn = document.querySelector('.primary-btn');
     if (viewProductsBtn) {
@@ -94,6 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    console.log('Coffee & Tea Shop Website Loaded! ☕');
 });
 
 // Profile Dropdown Toggle
@@ -120,48 +110,4 @@ document.addEventListener('click', function(event) {
     menu.classList.remove('show');
     if (toggle) toggle.classList.remove('active');
   }
-});
-
-// Mobile menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const closeMenuBtn = document.getElementById('closeMenuBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const overlay = document.getElementById('overlay');
-  
-  if (hamburgerBtn) {
-    hamburgerBtn.addEventListener('click', function() {
-      mobileMenu.classList.add('active');
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    });
-  }
-  
-  if (closeMenuBtn) {
-    closeMenuBtn.addEventListener('click', function() {
-      mobileMenu.classList.remove('active');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    });
-  }
-  
-  if (overlay) {
-    overlay.addEventListener('click', function() {
-      mobileMenu.classList.remove('active');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    });
-  }
-  
-  // Close mobile menu when clicking on links
-  const mobileLinks = document.querySelectorAll('.mobile-menu-links a');
-  mobileLinks.forEach(link => {
-    link.addEventListener('click', function() {
-      mobileMenu.classList.remove('active');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    });
-  });
-  
-  console.log('Coffee & Tea Shop Website Loaded! ☕');
 });
