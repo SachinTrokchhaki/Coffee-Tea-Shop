@@ -3,11 +3,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import render
-from apps.products.models import Product  # Import Product model
+from apps.products.models import Product
 
 def home_page(request):
-    # Get all available products for the menu section
-    products = Product.objects.filter(is_available=True)[:4]  # Show first 4 products
+    """Home page view"""
+    products = Product.objects.filter(is_available=True)[:4]
     total_products = Product.objects.filter(is_available=True).count()
     
     return render(request, 'index.html', {
@@ -27,12 +27,11 @@ urlpatterns = [
     path('about/', about_page, name='about'),
     path('contact/', contact_page, name='contact'),
     
-    # App URLs
+    # App URLs - NO DUPLICATES
     path('products/', include('apps.products.urls')),
-    path('cart/', include('apps.cart.urls')),
+    path('cart/', include('apps.cart.urls')),      # Only ONE cart URL
     path('accounts/', include('apps.accounts.urls')),
-    
-    path('cart/', include('apps.cart.urls')),
+    path('orders/', include('apps.orders.urls')),  # Orders URLs
 ]
 
 if settings.DEBUG:

@@ -9,5 +9,5 @@ urlpatterns = [
     path('remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('update/<int:item_id>/', views.update_cart_quantity, name='update_cart_quantity'),
     path('clear/', views.clear_cart, name='clear_cart'),
-    path('checkout/', views.checkout_view, name='checkout'),
+    path('checkout/', views.checkout_view, name='checkout'),  # This now redirects to orders checkout
 ]

@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - Coffee & Tea Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+  .checkout-page {
+    padding: 60px 20px;
+    background: var(--bg);
+    min-height: calc(100vh - 300px);
+  }
+  
+  .checkout-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .checkout-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+  }
+  
+  .checkout-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  
+  .payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  
+  .payment-option {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+  }
+  
+  .payment-option.selected {
+    border-color: var(--primary);
+    background: rgba(45, 90, 61, 0.05);
+  }
+  
+  .payment-radio {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .order-summary {
+    background: var(--bg);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+  
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+  
+  .order-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+  }
+  
+  .place-order-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: var(--primary);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="checkout-page">
+  <div class="checkout-container">
+    <div class="checkout-card">
+      <div class="checkout-header">
+        <h1>Checkout</h1>
+        <p>Complete your order information</p>
+      </div>
+      
+      <form method="post" id="checkoutForm">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label>Full Name *</label>
+          {{ form.full_name }}
+        </div>
+        
+        <div class="form-group">
+          <label>Email *</label>
+          {{ form.email }}
+        </div>
+        
+        <div class="form-group">
+          <label>Phone *</label>
+          {{ form.phone }}
+        </div>
+        
+        <div class="form-group">
+          <label>Address *</label>
+          {{ form.address }}
+        </div>
+        
+        <div class="form-group">
+          <label>City *</label>
+          {{ form.city }}
+        </div>
+        
+        <div class="form-group">
+          <label>Postal Code</label>
+          {{ form.postal_code }}
+        </div>
+        
+        <h3>Payment Method</h3>
+        <div class="payment-methods">
+          <label class="payment-option">
+            <div class="payment-radio">
+              <input type="radio" name="payment_method" value="cod" checked>
+              <span>Cash on Delivery</span>
+            </div>
+          </label>
+          <label class="payment-option">
+            <div class="payment-radio">
+              <input type="radio" name="payment_method" value="esewa">
+              <span>Esewa</span>
+            </div>
+          </label>
+          <label class="payment-option">
+            <div class="payment-radio">
+              <input type="radio" name="payment_method" value="khalti">
+              <span>Khalti</span>
+            </div>
+          </label>
+          <label class="payment-option">
+            <div class="payment-radio">
+              <input type="radio" name="payment_method" value="stripe">
+              <span>Credit / Debit Card</span>
+            </div>
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <label>Additional Notes</label>
+          {{ form.notes }}
+        </div>
+        
+        <div class="order-summary">
+          <h3>Order Summary</h3>
+          {% for item in cart_items %}
+          <div class="order-item">
+            <span>{{ item.product.name }} x {{ item.quantity }}</span>
+            <span>रू {{ item.get_total_price|floatformat:2 }}</span>
+          </div>
+          {% endfor %}
+          <div class="order-total">
+            <span>Total</span>
+            <span>रू {{ total_price|floatformat:2 }}</span>
+          </div>
+        </div>
+        
+        <button type="submit" class="place-order-btn">Place Order</button>
+        <a href="/cart/" class="back-link">← Back to Cart</a>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.payment-option').forEach(option => {
+    const radio = option.querySelector('input');
+    radio.addEventListener('change', function() {
+      document.querySelectorAll('.payment-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      if (this.checked) option.classList.add('selected');
+    });
+    if (radio.checked) option.classList.add('selected');
+  });
+</script>
+{% endblock %}

@@ -117,16 +117,12 @@ def clear_cart(request):
     return redirect('cart:cart_detail')
 
 def checkout_view(request):
-    """Checkout page (payment integration later)"""
+    """Redirect to orders checkout page"""
     cart = get_cart(request)
     
     if cart.get_total_items() == 0:
         messages.warning(request, 'Your cart is empty!')
         return redirect('cart:cart_detail')
     
-    context = {
-        'cart': cart,
-        'total_price': cart.get_total_price(),
-        'total_items': cart.get_total_items(),
-    }
-    return render(request, 'cart/checkout.html', context)
+    # Redirect to the orders app checkout page
+    return redirect('orders:checkout')
