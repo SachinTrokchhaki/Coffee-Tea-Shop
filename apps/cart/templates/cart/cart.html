@@ -192,10 +192,35 @@
     cursor: pointer;
     transition: all 0.3s;
     margin-top: 20px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
   }
   
   .checkout-btn:hover {
     background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  .checkout-btn-login {
+    width: 100%;
+    padding: 14px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 20px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+  
+  .checkout-btn-login:hover {
+    background: #c82333;
     transform: translateY(-2px);
   }
   
@@ -374,7 +399,7 @@
                   </div>
                 </div>
                </td>
-              <td data-label="Price" class="cart-price" id="price-{{ item.id }}">रू {{ item.price_at_add|floatformat:2 }}</td>
+              <td data-label="Price" class="cart-price">रू {{ item.price_at_add|floatformat:2 }}</td>
               <td data-label="Quantity">
                 <div class="cart-quantity">
                   <button class="quantity-btn decrease" data-item-id="{{ item.id }}">-</button>
@@ -409,9 +434,17 @@
           <span>Total</span>
           <span id="total-amount">रू {{ total_price|floatformat:2 }}</span>
         </div>
-        <button class="checkout-btn" onclick="window.location.href='{% url 'cart:checkout' %}'">
-          Proceed to Checkout 🛒
-        </button>
+        
+        {% if user.is_authenticated %}
+          <a href="{% url 'orders:checkout' %}" class="checkout-btn">
+            Proceed to Checkout 🛒
+          </a>
+        {% else %}
+          <a href="/accounts/login/?next=/orders/checkout/" class="checkout-btn-login">
+            Login to Checkout 🔐
+          </a>
+        {% endif %}
+        
         <button class="clear-cart-btn" id="clearCartBtn">
           Clear Cart 🗑️
         </button>
@@ -452,7 +485,7 @@
   const csrftoken = getCookie('csrftoken');
   
   // Show notification
-  function showNotification(message, isError = false) {
+  function showNotification(message, isError) {
     const notification = document.createElement('div');
     notification.className = 'cart-notification';
     notification.innerHTML = `
@@ -462,7 +495,6 @@
       </div>
     `;
     document.body.appendChild(notification);
-    
     setTimeout(() => {
       notification.remove();
     }, 2000);
@@ -472,13 +504,11 @@
   function updateCartCount(count) {
     const desktopCount = document.getElementById('cartCountDesktop');
     const mobileCount = document.getElementById('cartCountMobile');
-    
     if (desktopCount) {
       desktopCount.innerText = count;
       if (count === 0) desktopCount.style.display = 'none';
       else desktopCount.style.display = 'inline-block';
     }
-    
     if (mobileCount) {
       mobileCount.innerText = count;
       if (count === 0) mobileCount.style.display = 'none';
@@ -489,8 +519,6 @@
   // Update quantity
   function updateQuantity(itemId, newQuantity) {
     if (newQuantity < 1) return;
-    
-    // Show loading state
     const row = document.getElementById(`cart-item-${itemId}`);
     if (row) row.classList.add('loading');
     
@@ -506,32 +534,20 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        // Update item quantity display
         const qtyInput = document.getElementById(`qty-${itemId}`);
         if (qtyInput) qtyInput.value = data.item_quantity;
-        
-        // Update item total
         const totalSpan = document.getElementById(`total-${itemId}`);
         if (totalSpan) totalSpan.innerText = `रू ${data.item_total}`;
-        
-        // Update subtotal and total
         const subtotalSpan = document.getElementById('subtotal');
         const totalAmountSpan = document.getElementById('total-amount');
         const itemCountSpan = document.getElementById('item-count');
-        
         if (subtotalSpan) subtotalSpan.innerText = `रू ${data.cart_total}`;
         if (totalAmountSpan) totalAmountSpan.innerText = `रू ${data.cart_total}`;
         if (itemCountSpan) itemCountSpan.innerText = data.cart_items;
-        
-        // Update cart count in navbar
         updateCartCount(data.cart_items);
-        
-        // If quantity becomes 0, remove the row
         if (data.item_quantity === 0) {
           const row = document.getElementById(`cart-item-${itemId}`);
           if (row) row.remove();
-          
-          // Check if cart is empty
           const tbody = document.getElementById('cart-items-body');
           if (tbody && tbody.children.length === 0) {
             location.reload();
@@ -553,7 +569,6 @@
   // Remove item
   function removeItem(itemId) {
     if (!confirm('Remove this item from cart?')) return;
-    
     const row = document.getElementById(`cart-item-${itemId}`);
     if (row) row.classList.add('loading');
     
@@ -567,25 +582,16 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        showNotification(data.message);
-        
-        // Remove the row
+        showNotification(data.message, false);
         const row = document.getElementById(`cart-item-${itemId}`);
         if (row) row.remove();
-        
-        // Update totals
         const subtotalSpan = document.getElementById('subtotal');
         const totalAmountSpan = document.getElementById('total-amount');
         const itemCountSpan = document.getElementById('item-count');
-        
         if (subtotalSpan) subtotalSpan.innerText = `रू ${data.cart_price}`;
         if (totalAmountSpan) totalAmountSpan.innerText = `रू ${data.cart_price}`;
         if (itemCountSpan) itemCountSpan.innerText = data.cart_total;
-        
-        // Update cart count in navbar
         updateCartCount(data.cart_total);
-        
-        // Check if cart is empty
         const tbody = document.getElementById('cart-items-body');
         if (tbody && tbody.children.length === 0) {
           location.reload();
@@ -606,7 +612,6 @@
   // Clear entire cart
   function clearCart() {
     if (!confirm('Clear entire cart? This action cannot be undone.')) return;
-    
     const clearBtn = document.getElementById('clearCartBtn');
     if (clearBtn) clearBtn.disabled = true;
     
@@ -620,7 +625,7 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        showNotification('Cart cleared successfully!');
+        showNotification('Cart cleared successfully!', false);
         setTimeout(() => {
           location.reload();
         }, 1000);
@@ -636,7 +641,7 @@
     });
   }
   
-  // Event listeners for quantity buttons
+  // Event listeners
   document.querySelectorAll('.increase').forEach(btn => {
     btn.addEventListener('click', function() {
       const itemId = this.dataset.itemId;
@@ -657,7 +662,6 @@
     });
   });
   
-  // Remove item buttons
   document.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       const itemId = this.dataset.itemId;
@@ -665,7 +669,6 @@
     });
   });
   
-  // Clear cart button
   const clearCartBtn = document.getElementById('clearCartBtn');
   if (clearCartBtn) {
     clearCartBtn.addEventListener('click', clearCart);

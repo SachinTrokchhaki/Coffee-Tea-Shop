@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cash on Delivery - Coffee & Tea Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+  .payment-page {
+    padding: 60px 20px;
+    background: var(--bg);
+    min-height: calc(100vh - 300px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .payment-container {
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .payment-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  
+  .payment-icon {
+    font-size: 70px;
+    margin-bottom: 20px;
+  }
+  
+  .payment-card h2 {
+    margin-bottom: 10px;
+    color: var(--fg);
+  }
+  
+  .amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 20px 0;
+  }
+  
+  .order-details {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: left;
+    margin: 20px 0;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+  
+  .info-box {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: left;
+  }
+  
+  .info-box i {
+    color: var(--primary);
+    margin-right: 10px;
+  }
+  
+  .confirm-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .confirm-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: var(--primary);
+    text-decoration: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="payment-page">
+  <div class="payment-container">
+    <div class="payment-card">
+      <div class="payment-icon">💵</div>
+      <h2>Cash on Delivery</h2>
+      <p>Pay when you receive your order</p>
+      
+      <div class="amount">
+        रू {{ order.grand_total|floatformat:2 }}
+      </div>
+      
+      <div class="order-details">
+        <div class="detail-row">
+          <span>Order Number:</span>
+          <strong>{{ order.order_number }}</strong>
+        </div>
+        <div class="detail-row">
+          <span>Delivery Address:</span>
+          <strong>{{ order.address }}, {{ order.city }}</strong>
+        </div>
+        <div class="detail-row">
+          <span>Phone:</span>
+          <strong>{{ order.phone }}</strong>
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        Please keep exact cash ready for the delivery person.
+      </div>
+      
+      <form method="post" action="{% url 'orders:order_success' order.id %}">
+        {% csrf_token %}
+        <button type="submit" class="confirm-btn">Confirm Order ✅</button>
+      </form>
+      
+      <a href="{% url 'orders:checkout' %}" class="back-link">← Back to Checkout</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

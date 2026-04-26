@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Card Payment - Coffee & Tea Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+  .payment-page {
+    padding: 60px 20px;
+    background: var(--bg);
+    min-height: calc(100vh - 300px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .payment-container {
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .payment-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  
+  .payment-icon {
+    font-size: 70px;
+    margin-bottom: 20px;
+  }
+  
+  .payment-card h2 {
+    margin-bottom: 10px;
+  }
+  
+  .amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 15px 0;
+  }
+  
+  .card-form {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: left;
+  }
+  
+  .card-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+  }
+  
+  .card-row {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .card-row .card-input {
+    flex: 1;
+  }
+  
+  .pay-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s;
+  }
+  
+  .pay-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  .card-icons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .card-icons i {
+    font-size: 35px;
+    color: var(--muted);
+  }
+  
+  .demo-note {
+    background: #fff3cd;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #856404;
+  }
+  
+  .test-cards {
+    background: #e8f5e9;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 11px;
+    text-align: left;
+  }
+  
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: var(--primary);
+    text-decoration: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="payment-page">
+  <div class="payment-container">
+    <div class="payment-card">
+      <div class="payment-icon">💳</div>
+      <h2>Card Payment</h2>
+      <p>Enter your card details</p>
+      
+      <div class="amount">
+        रू {{ order.grand_total|floatformat:2 }}
+      </div>
+      
+      <div class="card-form">
+        <input type="text" class="card-input" placeholder="Card Number" id="cardNumber" value="4242 4242 4242 4242">
+        <input type="text" class="card-input" placeholder="Cardholder Name" id="cardName" value="TEST USER">
+        <div class="card-row">
+          <input type="text" class="card-input" placeholder="MM/YY" id="expiry" value="12/28">
+          <input type="text" class="card-input" placeholder="CVC" id="cvc" value="123">
+        </div>
+        
+        <div class="card-icons">
+          <i class="fab fa-cc-visa"></i>
+          <i class="fab fa-cc-mastercard"></i>
+          <i class="fab fa-cc-amex"></i>
+        </div>
+      </div>
+      
+      <button class="pay-btn" id="payBtn">
+        Pay रू {{ order.grand_total|floatformat:2 }} 💳
+      </button>
+      
+      <div class="demo-note">
+        <i class="fas fa-info-circle"></i> Demo Mode: Card payment will be processed via Stripe in production.
+      </div>
+      
+      <div class="test-cards">
+        <strong>Test Cards:</strong><br>
+        Visa: 4242 4242 4242 4242 | Any future date | Any CVC<br>
+        Mastercard: 5555 5555 5555 4444
+      </div>
+      
+      <a href="{% url 'orders:checkout' %}" class="back-link">← Back to Checkout</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById('payBtn').addEventListener('click', function() {
+    const cardNumber = document.getElementById('cardNumber').value;
+    const cardName = document.getElementById('cardName').value;
+    const expiry = document.getElementById('expiry').value;
+    
+    if (!cardNumber || !cardName || !expiry) {
+      alert('Please fill in all card details');
+      return;
+    }
+    
+    alert('🎉 Card Payment Demo!\n\nAmount: रू {{ order.grand_total|floatformat:2 }}\nCard: ' + cardNumber + '\n\nThis will process payment via Stripe in production.');
+  });
+</script>
+{% endblock %}

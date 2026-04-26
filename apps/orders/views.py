@@ -9,8 +9,10 @@ from .models import Order, OrderItem
 from apps.cart.views import get_cart
 from apps.cart.models import CartItem
 
+# CHECKOUT VIEW - LOGIN REQUIRED
+@login_required
 def checkout_view(request):
-    """Checkout page - Collect shipping info and select payment method"""
+    """Checkout page - Collect shipping info and select payment method (Login Required)"""
     cart = get_cart(request)
     
     if cart.get_total_items() == 0:
@@ -24,23 +26,21 @@ def checkout_view(request):
         payment_method = request.POST.get('payment_method')
         
         if form.is_valid():
-            # CREATE ORDER - THIS WAS MISSING
+            # CREATE ORDER
             order = form.save(commit=False)
             
-            # Set user info
-            if request.user.is_authenticated:
-                order.user = request.user
-                # Auto-fill from user profile if not provided
-                if not order.email:
-                    order.email = request.user.email
-                if not order.full_name:
-                    order.full_name = request.user.get_full_name() or request.user.username
-                if not order.phone:
-                    order.phone = request.user.phone_number
-                if not order.address:
-                    order.address = request.user.address
-            else:
-                order.session_key = request.session.session_key
+            # Set user info (user is guaranteed logged in due to @login_required)
+            order.user = request.user
+            if not order.email:
+                order.email = request.user.email
+            if not order.full_name:
+                order.full_name = request.user.get_full_name() or request.user.username
+            if not order.phone:
+                order.phone = request.user.phone_number
+            if not order.address:
+                order.address = request.user.address
+            
+            order.session_key = request.session.session_key
             
             # Set order financial details
             order.total_amount = cart.get_total_price()
@@ -74,7 +74,7 @@ def checkout_view(request):
                     return JsonResponse({
                         'success': True,
                         'order_id': order.id,
-                        'redirect_url': reverse('orders:order_success', args=[order.id])
+                        'redirect_url': reverse('orders:cod_payment', args=[order.id])
                     })
                 elif payment_method == 'esewa':
                     return JsonResponse({
@@ -94,8 +94,7 @@ def checkout_view(request):
             
             # Handle regular POST (non-AJAX)
             if payment_method == 'cod':
-                messages.success(request, f'Order #{order.order_number} placed successfully!')
-                return redirect('orders:order_success', order_id=order.id)
+                return redirect('orders:cod_payment', order_id=order.id)
             elif payment_method == 'esewa':
                 return redirect('orders:esewa_payment', order_id=order.id)
             elif payment_method == 'khalti':
@@ -107,15 +106,13 @@ def checkout_view(request):
                 return JsonResponse({'success': False, 'error': 'Invalid form data'})
     
     else:
-        # GET request - pre-fill form if user is logged in
-        initial_data = {}
-        if request.user.is_authenticated:
-            initial_data = {
-                'full_name': request.user.get_full_name() or request.user.username,
-                'email': request.user.email,
-                'phone': request.user.phone_number,
-                'address': request.user.address,
-            }
+        # GET request - pre-fill form with logged-in user's data
+        initial_data = {
+            'full_name': request.user.get_full_name() or request.user.username,
+            'email': request.user.email,
+            'phone': request.user.phone_number,
+            'address': request.user.address,
+        }
         form = CheckoutForm(initial=initial_data)
     
     context = {
@@ -148,74 +145,33 @@ def order_detail(request, order_id):
     return render(request, 'orders/order_detail.html', {'order': order})
 
 
-# Payment Views
+# ============================================
+# PAYMENT VIEWS - WITH SEPARATE UI FOR EACH METHOD (Login Required)
+# ============================================
+
+@login_required
+def cod_payment(request, order_id):
+    """Cash on Delivery payment page"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'orders/payment/cod.html', {'order': order})
+
+
+@login_required
 def esewa_payment(request, order_id):
-    """Redirect to Esewa payment page"""
-    from .utils.esewa import prepare_esewa_payment
-    order = get_object_or_404(Order, id=order_id)
-    payment_data = prepare_esewa_payment(order)
-    
-    context = {
-        'order': order,
-        'payment_data': payment_data,
-        'esewa_url': 'https://uat.esewa.com.np/epay/main'
-    }
-    return render(request, 'orders/esewa_payment.html', context)
+    """Esewa payment page"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'orders/payment/esewa.html', {'order': order})
 
 
-@csrf_exempt
-def esewa_success(request):
-    """Esewa payment success callback"""
-    from .utils.esewa import verify_esewa_payment
-    
-    if request.method == 'GET':
-        data = request.GET
-        order_id = data.get('oid')
-        
-        result = verify_esewa_payment(request)
-        
-        if result['success']:
-            order = Order.objects.filter(order_number=order_id).first()
-            if order:
-                order.payment_status = 'paid'
-                order.status = 'confirmed'
-                order.payment_id = result.get('transaction_id')
-                order.save()
-                messages.success(request, 'Payment successful! Your order has been confirmed.')
-                return redirect('orders:order_success', order_id=order.id)
-    
-    messages.error(request, 'Payment failed! Please try again.')
-    return redirect('orders:checkout')
-
-
-def esewa_failure(request):
-    """Esewa payment failure callback"""
-    messages.error(request, 'Payment failed! Please try again.')
-    return redirect('orders:checkout')
-
-
+@login_required
 def khalti_payment(request, order_id):
-    """Initiate Khalti payment"""
-    from .utils.khalti import initiate_khalti_payment
-    order = get_object_or_404(Order, id=order_id)
-    result = initiate_khalti_payment(order)
-    
-    if result.get('payment_url'):
-        return redirect(result['payment_url'])
-    else:
-        messages.error(request, 'Failed to initiate Khalti payment!')
-        return redirect('orders:checkout')
+    """Khalti payment page"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'orders/payment/khalti.html', {'order': order})
 
 
+@login_required
 def stripe_payment(request, order_id):
     """Stripe payment page"""
-    from .utils.stripe_helper import create_stripe_payment_intent
-    order = get_object_or_404(Order, id=order_id)
-    result = create_stripe_payment_intent(order)
-    
-    context = {
-        'order': order,
-        'stripe_public_key': 'pk_test_your_stripe_public_key',
-        'client_secret': result.get('client_secret')
-    }
-    return render(request, 'orders/stripe_payment.html', context)
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'orders/payment/stripe.html', {'order': order})
