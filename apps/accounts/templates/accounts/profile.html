@@ -3,63 +3,7 @@
 
 {% block title %}My Profile - Coffee & Tea Shop{% endblock %}
 
-{% block content %}
-<section class="page-hero small-hero">
-  <div class="container">
-    <h1>My Profile</h1>
-    <p>Welcome back, {{ user.first_name|default:user.username }}!</p>
-  </div>
-</section>
-
-<section class="profile-section">
-  <div class="container">
-    <div class="profile-card-simple">
-      <div class="profile-header">
-        <div class="profile-avatar-large">
-          {% if user.profile_picture %}
-            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
-          {% else %}
-            <i class="fas fa-user-circle"></i>
-          {% endif %}
-        </div>
-        <h2>{{ user.get_full_name|default:user.username }}</h2>
-        <p>@{{ user.username }}</p>
-        <p>{{ user.email }}</p>
-      </div>
-      
-      <div class="profile-info">
-        <h3>Profile Information</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <strong>Full Name:</strong>
-            <span>{{ user.get_full_name|default:"Not provided" }}</span>
-          </div>
-          <div class="info-item">
-            <strong>Username:</strong>
-            <span>{{ user.username }}</span>
-          </div>
-          <div class="info-item">
-            <strong>Email:</strong>
-            <span>{{ user.email }}</span>
-          </div>
-          <div class="info-item">
-            <strong>Phone Number:</strong>
-            <span>{{ user.phone_number|default:"Not provided" }}</span>
-          </div>
-          <div class="info-item">
-            <strong>Address:</strong>
-            <span>{{ user.address|default:"Not provided" }}</span>
-          </div>
-          <div class="info-item">
-            <strong>Member Since:</strong>
-            <span>{{ user.date_joined|date:"F j, Y" }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
+{% block extra_css %}
 <style>
   .profile-section {
     padding: 60px 20px;
@@ -67,85 +11,440 @@
     min-height: calc(100vh - 300px);
   }
   
-  .profile-card-simple {
-    max-width: 800px;
+  .profile-container {
+    max-width: 1000px;
     margin: 0 auto;
+  }
+  
+  /* Profile Card */
+  .profile-card {
     background: white;
-    border-radius: 20px;
+    border-radius: 24px;
     overflow: hidden;
     box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
   }
   
-  .profile-header {
-    text-align: center;
-    padding: 40px;
+  /* Cover Photo */
+  .profile-cover {
+    height: 120px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: white;
+    position: relative;
   }
   
-  .profile-avatar-large {
+  /* Avatar Section */
+  .avatar-wrapper {
+    text-align: center;
+    margin-top: -60px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .profile-avatar {
+    position: relative;
     width: 120px;
     height: 120px;
-    margin: 0 auto 20px;
+    margin: 0 auto;
     border-radius: 50%;
     overflow: hidden;
     background: white;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    border: 4px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   }
   
-  .profile-avatar-large i {
-    font-size: 80px;
-    color: var(--primary);
-  }
-  
-  .profile-avatar-large img {
+  .profile-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
   
-  .profile-header h2 {
+  .profile-avatar i {
+    font-size: 80px;
+    color: var(--primary);
+  }
+  
+  .avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .profile-avatar:hover .avatar-overlay {
+    opacity: 1;
+  }
+  
+  .avatar-overlay i {
+    font-size: 28px;
     color: white;
+  }
+  
+  /* Profile Header */
+  .profile-header-section {
+    text-align: center;
+    padding: 20px 30px 25px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .profile-header-section h2 {
+    font-size: 1.8rem;
     margin-bottom: 5px;
   }
   
-  .profile-header p {
-    opacity: 0.9;
+  .profile-username {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
   }
   
-  .profile-info {
-    padding: 40px;
+  .profile-email {
+    color: var(--primary);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
   }
   
-  .profile-info h3 {
-    margin-bottom: 20px;
+  /* Stats Bar */
+  .profile-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 15px 0;
+  }
+  
+  .stat-item {
+    text-align: center;
+  }
+  
+  .stat-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
     color: var(--fg);
   }
   
+  .btn-icon:hover {
+    background: var(--bg);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  
+  .btn-icon-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+  
+  .btn-icon-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  /* Tab Navigation */
+  .profile-tabs {
+    display: flex;
+    gap: 5px;
+    padding: 0 30px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .tab-btn {
+    padding: 14px 28px;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.3s;
+    position: relative;
+  }
+  
+  .tab-btn:hover {
+    color: var(--primary);
+  }
+  
+  .tab-btn.active {
+    color: var(--primary);
+  }
+  
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+  }
+  
+  /* Tab Content */
+  .tab-content {
+    display: none;
+    padding: 30px;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Info Grid */
   .info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
   
-  .info-item {
-    padding: 12px;
+  .info-card {
     background: var(--bg);
-    border-radius: 10px;
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s;
   }
   
-  .info-item strong {
-    display: block;
-    margin-bottom: 5px;
+  .info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  
+  .info-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
     color: var(--primary);
-    font-size: 12px;
+    font-size: 0.75rem;
     text-transform: uppercase;
+    font-weight: 600;
   }
   
-  .info-item span {
+  .info-value {
+    font-size: 1rem;
     color: var(--fg);
+    word-break: break-word;
+  }
+  
+  /* Edit Form Container */
+  .edit-form-container {
+    background: var(--bg);
+    border-radius: 20px;
+    padding: 30px;
+  }
+  
+  .edit-form-container h3 {
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--fg);
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.3s;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+  }
+  
+  textarea.form-control {
+    resize: vertical;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .form-hint {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+  }
+  
+  .btn-save {
+    padding: 12px 28px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .btn-save:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  .btn-cancel {
+    padding: 12px 28px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .btn-cancel:hover {
+    background: var(--bg);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  
+  /* Password Section */
+  .password-section {
+    background: var(--bg);
+    border-radius: 20px;
+    padding: 30px;
+  }
+  
+  .password-section h3 {
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .security-note {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 20px 0;
+    font-size: 0.8rem;
+    color: var(--primary);
+  }
+  
+  /* Orders List */
+  .orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .order-card {
+    background: var(--bg);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    transition: all 0.3s;
+  }
+  
+  .order-card:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow);
+  }
+  
+  .order-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .status-pending { background: #ffc107; color: #000; }
+  .status-confirmed { background: #17a2b8; color: white; }
+  .status-processing { background: #fd7e14; color: white; }
+  .status-shipped { background: #6f42c1; color: white; }
+  .status-delivered { background: #28a745; color: white; }
+  .status-cancelled { background: #dc3545; color: white; }
+  
+  .view-order-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  
+  .empty-state i {
+    font-size: 64px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  
+  /* Edit Mode Container - Full width */
+  .edit-mode-container {
+    width: 100%;
   }
   
   @media (max-width: 768px) {
@@ -153,13 +452,322 @@
       grid-template-columns: 1fr;
     }
     
-    .profile-info {
-      padding: 25px;
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 15px;
     }
     
-    .profile-header {
-      padding: 25px;
+    .profile-tabs {
+      overflow-x: auto;
+    }
+    
+    .tab-btn {
+      white-space: nowrap;
+    }
+    
+    .order-card {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+    
+    .profile-stats {
+      gap: 20px;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .btn-icon {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+  <div class="profile-container">
+    <div class="profile-card">
+      <!-- Cover Photo -->
+      <div class="profile-cover"></div>
+      
+      <!-- Avatar Upload -->
+      <div class="avatar-wrapper">
+        <form method="post" enctype="multipart/form-data" id="avatarForm">
+          {% csrf_token %}
+          <div class="profile-avatar" onclick="document.getElementById('profile_picture_input').click()">
+            {% if user.profile_picture %}
+              <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" id="avatarPreview">
+            {% else %}
+              <i class="fas fa-user-circle" id="avatarPreviewIcon"></i>
+            {% endif %}
+            <div class="avatar-overlay">
+              <i class="fas fa-camera"></i>
+            </div>
+          </div>
+          <input type="file" name="profile_picture" id="profile_picture_input" accept="image/*" style="display: none;">
+        </form>
+      </div>
+      
+      <!-- Profile Header -->
+      <div class="profile-header-section">
+        <h2>{{ user.get_full_name|default:user.username }}</h2>
+        <div class="profile-username">@{{ user.username }}</div>
+        <div class="profile-email">{{ user.email }}</div>
+        
+        <div class="profile-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ orders_count|default:"0" }}</span>
+            <span class="stat-label">Orders</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">रू {{ total_spent|default:"0" }}</span>
+            <span class="stat-label">Total Spent</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ user.date_joined|date:"Y" }}</span>
+            <span class="stat-label">Member Since</span>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn-icon" id="showEditProfileBtn">
+            <i class="fas fa-user-edit"></i> Edit Profile
+          </button>
+          <button class="btn-icon" id="showChangePasswordBtn">
+            <i class="fas fa-lock"></i> Change Password
+          </button>
+        </div>
+      </div>
+      
+      <!-- Tabs (Hidden when editing) -->
+      <div class="profile-tabs" id="profileTabs">
+        <button class="tab-btn active" data-tab="info">Personal Information</button>
+        <button class="tab-btn" data-tab="orders">My Orders</button>
+      </div>
+      
+      <!-- Tab: Personal Information -->
+      <div class="tab-content active" id="infoTab">
+        <!-- View Mode - Shows Information -->
+        <div id="viewMode">
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-label"><i class="fas fa-user"></i> Full Name</div>
+              <div class="info-value">{{ user.get_full_name|default:"Not provided" }}</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label"><i class="fas fa-at"></i> Username</div>
+              <div class="info-value">{{ user.username }}</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label"><i class="fas fa-envelope"></i> Email</div>
+              <div class="info-value">{{ user.email }}</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label"><i class="fas fa-phone"></i> Phone Number</div>
+              <div class="info-value">{{ user.phone_number|default:"Not provided" }}</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label"><i class="fas fa-map-marker-alt"></i> Address</div>
+              <div class="info-value">{{ user.address|default:"Not provided" }}</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label"><i class="fas fa-calendar"></i> Member Since</div>
+              <div class="info-value">{{ user.date_joined|date:"F j, Y" }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Edit Profile Mode - Replaces view mode -->
+        <div id="editProfileMode" style="display: none;">
+          <div class="edit-form-container">
+            <h3><i class="fas fa-user-edit"></i> Edit Profile Information</h3>
+            <form method="post" id="profileForm">
+              {% csrf_token %}
+              <div class="form-row">
+                <div class="form-group">
+                  <label>First Name</label>
+                  <input type="text" name="first_name" class="form-control" value="{{ user.first_name|default:'' }}" placeholder="Enter your first name">
+                  <small class="form-hint">Your first name</small>
+                </div>
+                <div class="form-group">
+                  <label>Last Name</label>
+                  <input type="text" name="last_name" class="form-control" value="{{ user.last_name|default:'' }}" placeholder="Enter your last name">
+                  <small class="form-hint">Your last name</small>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone_number" class="form-control" value="{{ user.phone_number|default:'' }}" placeholder="Enter your phone number">
+                <small class="form-hint">Example: 98XXXXXXXX</small>
+              </div>
+              <div class="form-group">
+                <label>Address</label>
+                <textarea name="address" class="form-control" rows="3" placeholder="Enter your complete address">{{ user.address|default:'' }}</textarea>
+                <small class="form-hint">Street address, city, postal code</small>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                <button type="button" class="btn-cancel" id="cancelEditProfileBtn"><i class="fas fa-times"></i> Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <!-- Change Password Mode - Replaces view mode -->
+        <div id="changePasswordMode" style="display: none;">
+          <div class="password-section">
+            <h3><i class="fas fa-shield-alt"></i> Change Password</h3>
+            <form method="post" action="{% url 'accounts:change_password' %}">
+              {% csrf_token %}
+              <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" name="current_password" class="form-control" placeholder="Enter current password" required>
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input type="password" name="new_password" class="form-control" placeholder="Enter new password" required>
+              </div>
+              <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" name="confirm_password" class="form-control" placeholder="Confirm new password" required>
+              </div>
+              <div class="security-note">
+                <i class="fas fa-info-circle"></i> Password must be at least 6 characters long.
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-save"><i class="fas fa-key"></i> Update Password</button>
+                <button type="button" class="btn-cancel" id="cancelChangePasswordBtn"><i class="fas fa-times"></i> Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tab: My Orders -->
+      <div class="tab-content" id="ordersTab">
+        <div class="orders-list">
+          {% for order in orders %}
+          <div class="order-card">
+            <div>
+              <strong>Order #{{ order.order_number }}</strong>
+              <div><small>{{ order.created_at|date:"M d, Y" }}</small></div>
+            </div>
+            <div><strong>रू {{ order.grand_total|floatformat:2 }}</strong></div>
+            <div>
+              <span class="order-status status-{{ order.status }}">
+                {{ order.get_status_display }}
+              </span>
+            </div>
+            <a href="{% url 'orders:order_detail' order.id %}" class="view-order-link">View Details →</a>
+          </div>
+          {% empty %}
+          <div class="empty-state">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>No Orders Yet</h3>
+            <p>You haven't placed any orders yet.</p>
+            <a href="/products/" class="btn-icon-primary" style="text-decoration: none; margin-top: 15px; display: inline-block;">Start Shopping →</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const tabId = this.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById(`${tabId}Tab`).classList.add('active');
+    });
+  });
+  
+  // Get elements
+  const showEditProfileBtn = document.getElementById('showEditProfileBtn');
+  const showChangePasswordBtn = document.getElementById('showChangePasswordBtn');
+  const viewMode = document.getElementById('viewMode');
+  const editProfileMode = document.getElementById('editProfileMode');
+  const changePasswordMode = document.getElementById('changePasswordMode');
+  const cancelEditProfileBtn = document.getElementById('cancelEditProfileBtn');
+  const cancelChangePasswordBtn = document.getElementById('cancelChangePasswordBtn');
+  const profileTabs = document.getElementById('profileTabs');
+  
+  // Function to hide all modes and show view mode
+  function showViewMode() {
+    viewMode.style.display = 'block';
+    editProfileMode.style.display = 'none';
+    changePasswordMode.style.display = 'none';
+    profileTabs.style.display = 'flex';
+  }
+  
+  // Function to hide tabs when editing
+  function hideTabs() {
+    profileTabs.style.display = 'none';
+  }
+  
+  // Show Edit Profile Mode
+  if (showEditProfileBtn) {
+    showEditProfileBtn.addEventListener('click', () => {
+      viewMode.style.display = 'none';
+      editProfileMode.style.display = 'block';
+      changePasswordMode.style.display = 'none';
+      hideTabs();
+    });
+  }
+  
+  // Show Change Password Mode
+  if (showChangePasswordBtn) {
+    showChangePasswordBtn.addEventListener('click', () => {
+      viewMode.style.display = 'none';
+      editProfileMode.style.display = 'none';
+      changePasswordMode.style.display = 'block';
+      hideTabs();
+    });
+  }
+  
+  // Cancel Edit Profile
+  if (cancelEditProfileBtn) {
+    cancelEditProfileBtn.addEventListener('click', showViewMode);
+  }
+  
+  // Cancel Change Password
+  if (cancelChangePasswordBtn) {
+    cancelChangePasswordBtn.addEventListener('click', showViewMode);
+  }
+  
+  // Avatar upload
+  const avatarInput = document.getElementById('profile_picture_input');
+  if (avatarInput) {
+    avatarInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const avatarImg = document.getElementById('avatarPreview');
+          const avatarIcon = document.getElementById('avatarPreviewIcon');
+          if (avatarImg) {
+            avatarImg.src = event.target.result;
+          } else if (avatarIcon) {
+            const newImg = document.createElement('img');
+            newImg.id = 'avatarPreview';
+            newImg.src = event.target.result;
+            newImg.alt = 'Profile Picture';
+            avatarIcon.parentElement.replaceChild(newImg, avatarIcon);
+          }
+        };
+        reader.readAsDataURL(file);
+        document.getElementById('avatarForm').submit();
+      }
+    });
+  }
+</script>
 {% endblock %}
