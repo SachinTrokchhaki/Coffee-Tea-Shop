@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - Coffee & Tea Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+  .settings-section {
+    padding: 60px 20px;
+    background: var(--bg);
+    min-height: calc(100vh - 300px);
+  }
+  
+  .settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .settings-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .settings-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .settings-header p {
+    color: var(--muted);
+  }
+  
+  .settings-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+  }
+  
+  .settings-card-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  
+  .settings-card-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .settings-card-body {
+    padding: 25px;
+  }
+  
+  .setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .setting-item:last-child {
+    border-bottom: none;
+  }
+  
+  .setting-info h4 {
+    margin-bottom: 5px;
+  }
+  
+  .setting-info p {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  
+  /* Toggle Switch */
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+  }
+  
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+  }
+  
+  .toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .toggle-slider {
+    background-color: var(--primary);
+  }
+  
+  input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+  }
+  
+  .danger-zone {
+    border: 1px solid #dc3545;
+    background: #fff5f5;
+  }
+  
+  .danger-zone .settings-card-header {
+    background: #fee2e2;
+    border-bottom-color: #dc3545;
+  }
+  
+  .btn-danger {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .btn-danger:hover {
+    background: #dc3545;
+    color: white;
+  }
+  
+  .btn-save {
+    padding: 12px 28px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .btn-save:hover {
+    background: var(--primary-dark);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="settings-section">
+  <div class="settings-container">
+    <div class="settings-header">
+      <h1>Settings ⚙️</h1>
+      <p>Manage your account preferences</p>
+    </div>
+    
+    <form method="post">
+      {% csrf_token %}
+      
+      <!-- Notification Settings -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <h3><i class="fas fa-bell"></i> Notifications</h3>
+        </div>
+        <div class="settings-card-body">
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Email Notifications</h4>
+              <p>Receive order updates and promotional offers via email</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" name="email_notifications" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>SMS Notifications</h4>
+              <p>Get order status updates on your phone</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" name="sms_notifications">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Newsletter Subscription</h4>
+              <p>Receive weekly coffee tips and exclusive offers</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" name="newsletter" {% if user.profile.newsletter_subscribed %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Privacy Settings -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <h3><i class="fas fa-lock"></i> Privacy</h3>
+        </div>
+        <div class="settings-card-body">
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Show in Public Lists</h4>
+              <p>Allow others to see your reviews and activity</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" name="public_profile">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Preferences -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <h3><i class="fas fa-globe"></i> Preferences</h3>
+        </div>
+        <div class="settings-card-body">
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Language</h4>
+              <p>Choose your preferred language</p>
+            </div>
+            <select class="form-control" style="width: 150px;">
+              <option>English</option>
+              <option>Nepali</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Currency</h4>
+              <p>Select your preferred currency</p>
+            </div>
+            <select class="form-control" style="width: 150px;">
+              <option>NPR (रू)</option>
+              <option>USD ($)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Save Button -->
+      <div style="text-align: right; margin-top: 20px;">
+        <button type="submit" class="btn-save">Save Settings</button>
+      </div>
+    </form>
+    
+    <!-- Danger Zone -->
+    <div class="settings-card danger-zone">
+      <div class="settings-card-header">
+        <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+      </div>
+      <div class="settings-card-body">
+        <div class="setting-item">
+          <div class="setting-info">
+            <h4>Delete Account</h4>
+            <p>Permanently delete your account and all data</p>
+          </div>
+          <button class="btn-danger" onclick="confirmDelete()">Delete Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function confirmDelete() {
+    if (confirm('⚠️ WARNING: This action cannot be undone!\n\nAre you sure you want to delete your account?')) {
+      alert('Account deletion feature coming soon. Please contact support.');
+    }
+  }
+</script>
+{% endblock %}

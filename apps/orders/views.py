@@ -144,6 +144,19 @@ def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'orders/order_detail.html', {'order': order})
 
+# 2. Payment Action Views (like mark paid)
+@login_required
+def mark_order_paid(request, order_id):
+    """Mark COD order as paid (for demo)"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    if request.method == 'POST':
+        order.payment_status = 'paid'
+        order.status = 'confirmed'
+        order.save()
+        return JsonResponse({'success': True, 'message': 'Order marked as paid'})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
 
 # ============================================
 # PAYMENT VIEWS - WITH SEPARATE UI FOR EACH METHOD (Login Required)

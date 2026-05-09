@@ -59,6 +59,19 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s Profile"
 
 
+# Add this at the end of the file
+class Wishlist(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlist')
+    product = models.ForeignKey('products.Product', on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['user', 'product']
+        ordering = ['-added_at']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name}"
+
 # Signal to auto-create and manage profile when user is saved
 @receiver(post_save, sender=CustomUser)
 def create_or_save_user_profile(sender, instance, created, **kwargs):

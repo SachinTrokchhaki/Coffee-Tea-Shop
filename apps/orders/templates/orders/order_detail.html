@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.order_number }} - Coffee & Tea Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+  .order-detail-page {
+    padding: 60px 20px;
+    background: var(--bg);
+    min-height: calc(100vh - 300px);
+  }
+  
+  .order-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: var(--primary);
+    text-decoration: none;
+  }
+  
+  .order-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+  }
+  
+  .order-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 25px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .order-header h2 {
+    margin-bottom: 5px;
+    color: white;
+  }
+  
+  .order-status {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: white;
+    color: var(--primary);
+  }
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 25px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .info-card {
+    background: var(--bg);
+    padding: 15px;
+    border-radius: 12px;
+  }
+  
+  .info-card h4 {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+  
+  .info-card p {
+    margin-bottom: 5px;
+  }
+  
+  .items-section {
+    padding: 25px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .items-section h3 {
+    margin-bottom: 20px;
+  }
+  
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .items-table th {
+    text-align: left;
+    padding: 12px;
+    background: var(--bg);
+    font-weight: 600;
+  }
+  
+  .items-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .product-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .product-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .total-section {
+    padding: 25px;
+    background: var(--bg);
+  }
+  
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+  }
+  
+  .total-row.grand {
+    border-top: 2px solid var(--border);
+    margin-top: 10px;
+    padding-top: 15px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-secondary {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--fg);
+    transition: all 0.3s;
+  }
+  
+  .btn-secondary:hover {
+    background: var(--bg);
+  }
+  
+  .pay-now-btn {
+    padding: 10px 20px;
+    background: #0b4f6c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  
+  .pay-now-btn:hover {
+    background: #0a3d55;
+  }
+  
+  @media (max-width: 768px) {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .order-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 15px;
+    }
+    
+    .items-table {
+      display: block;
+      overflow-x: auto;
+    }
+    
+    .product-cell {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .action-buttons {
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="order-detail-page">
+  <div class="order-container">
+    <a href="{% url 'orders:order_history' %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Orders
+    </a>
+    
+    <div class="order-card">
+      <div class="order-header">
+        <div>
+          <h2>Order #{{ order.order_number }}</h2>
+          <p>Placed on {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+        </div>
+        <div>
+          <span class="order-status status-{{ order.status }}">
+            {{ order.get_status_display }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="info-grid">
+        <div class="info-card">
+          <h4><i class="fas fa-map-marker-alt"></i> Delivery Address</h4>
+          <p><strong>{{ order.full_name }}</strong></p>
+          <p>{{ order.address }}</p>
+          <p>{{ order.city }}{% if order.postal_code %}, {{ order.postal_code }}{% endif %}</p>
+          <p>📞 {{ order.phone }}</p>
+        </div>
+        <div class="info-card">
+          <h4><i class="fas fa-credit-card"></i> Payment Information</h4>
+          <p><strong>Method:</strong> {{ order.get_payment_method_display }}</p>
+          <p><strong>Status:</strong> 
+            <span style="color: {% if order.payment_status == 'paid' %}#28a745{% else %}#dc3545{% endif %}">
+              {{ order.get_payment_status_display|title }}
+            </span>
+          </p>
+          {% if order.payment_id %}
+            <p><strong>Transaction ID:</strong> {{ order.payment_id }}</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="items-section">
+        <h3>Order Items</h3>
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <td>
+                <div class="product-cell">
+                  <div class="product-image">
+                    {% if item.product.image %}
+                      <img src="{{ item.product.image.url }}" alt="{{ item.product_name }}">
+                    {% else %}
+                      <img src="{% static 'images/placeholder.jpg' %}" alt="{{ item.product_name }}">
+                    {% endif %}
+                  </div>
+                  <span>{{ item.product_name }}</span>
+                </div>
+              </td>
+              <td>रू {{ item.product_price|floatformat:2 }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>रू {{ item.total|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="total-section">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span>रू {{ order.total_amount|floatformat:2 }}</span>
+        </div>
+        <div class="total-row">
+          <span>Delivery Fee</span>
+          <span>रू {{ order.delivery_charge|floatformat:2 }}</span>
+        </div>
+        {% if order.discount > 0 %}
+        <div class="total-row">
+          <span>Discount</span>
+          <span>- रू {{ order.discount|floatformat:2 }}</span>
+        </div>
+        {% endif %}
+        <div class="total-row grand">
+          <span>Grand Total</span>
+          <span>रू {{ order.grand_total|floatformat:2 }}</span>
+        </div>
+        
+        {% if order.notes %}
+        <div class="total-row" style="margin-top: 15px;">
+          <span>Notes</span>
+          <span>{{ order.notes }}</span>
+        </div>
+        {% endif %}
+        
+        <div class="action-buttons">
+          <a href="/products/" class="btn-secondary">Continue Shopping</a>
+          
+          {% if order.payment_status == 'pending' %}
+            {% if order.payment_method == 'cod' %}
+              <button class="pay-now-btn" onclick="markAsPaid({{ order.id }})">
+                Confirm Payment Received
+              </button>
+            {% elif order.payment_method == 'esewa' %}
+              <a href="{% url 'orders:esewa_payment' order.id %}" class="pay-now-btn">
+                Pay with Esewa
+              </a>
+            {% elif order.payment_method == 'khalti' %}
+              <a href="{% url 'orders:khalti_payment' order.id %}" class="pay-now-btn">
+                Pay with Khalti
+              </a>
+            {% elif order.payment_method == 'stripe' %}
+              <a href="{% url 'orders:stripe_payment' order.id %}" class="pay-now-btn">
+                Pay with Card
+              </a>
+            {% endif %}
+          {% endif %}
+          
+          {% if order.status == 'pending' and order.payment_status != 'paid' %}
+            <button class="btn-secondary" onclick="cancelOrder({{ order.id }})" style="border-color: #dc3545; color: #dc3545;">
+              Cancel Order
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function markAsPaid(orderId) {
+    if (confirm('Confirm that you have received the payment for this order?')) {
+      fetch(`/orders/mark-paid/${orderId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('✓ Payment confirmed! Order status updated.');
+          location.reload();
+        } else {
+          alert('Failed to update order status');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred');
+      });
+    }
+  }
+  
+  function cancelOrder(orderId) {
+    if (confirm('Are you sure you want to cancel this order?')) {
+      alert('Order cancellation feature coming soon.');
+    }
+  }
+  
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+{% endblock %}

@@ -14,4 +14,7 @@ urlpatterns = [
     path('payment/esewa/<int:order_id>/', views.esewa_payment, name='esewa_payment'),
     path('payment/khalti/<int:order_id>/', views.khalti_payment, name='khalti_payment'),
     path('payment/stripe/<int:order_id>/', views.stripe_payment, name='stripe_payment'),
+    
+    
+    path('mark-paid/<int:order_id>/', views.mark_order_paid, name='mark_order_paid'),
 ]

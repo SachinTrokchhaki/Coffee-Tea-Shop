@@ -18,4 +18,4 @@ django-admin startproject project_name("cafe_shop")
 pip install Pillow
 
 #admin
-Test@admin1
+Test@Admin1
