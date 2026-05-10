@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import models
 from .forms import RegistrationForm, LoginForm
 from apps.products.models import Product
 from .models import Wishlist
@@ -16,7 +17,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, f'Welcome {user.first_name}! Your account has been created. Please login.')
-            return redirect('login')
+            return redirect('accounts:login')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
@@ -55,6 +56,7 @@ def login_view(request):
 @login_required
 def profile_view(request):
     """User Profile View - Handle profile picture upload and info update"""
+    from apps.orders.models import Order  # Import here to avoid circular import
     
     # Handle POST request (form submission)
     if request.method == 'POST':
@@ -63,7 +65,7 @@ def profile_view(request):
             request.user.profile_picture = request.FILES['profile_picture']
             request.user.save()
             messages.success(request, 'Profile picture updated successfully!')
-            return redirect('accounts:profile')  # ✅ Fixed: Added namespace
+            return redirect('accounts:profile')
         
         # Handle profile info update
         first_name = request.POST.get('first_name')
@@ -82,10 +84,22 @@ def profile_view(request):
         
         request.user.save()
         messages.success(request, 'Profile information updated successfully!')
-        return redirect('accounts:profile')  # ✅ Fixed: Added namespace
+        return redirect('accounts:profile')
     
-    # GET request - just show the profile page
-    return render(request, 'accounts/profile.html', {'user': request.user})
+    # GET request - calculate orders stats
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')[:10]
+    orders_count = Order.objects.filter(user=request.user).count()
+    total_spent = Order.objects.filter(user=request.user, payment_status='paid').aggregate(
+        total=models.Sum('grand_total')
+    )['total'] or 0
+    
+    context = {
+        'user': request.user,
+        'orders': orders,
+        'orders_count': orders_count,
+        'total_spent': total_spent,
+    }
+    return render(request, 'accounts/profile.html', context)
 
 @login_required
 def wishlist_view(request):
@@ -152,9 +166,9 @@ def change_password_view(request):
             request.user.set_password(new_password)
             request.user.save()
             messages.success(request, 'Password changed successfully! Please login again.')
-            return redirect('accounts:login')  # ✅ Fixed: Added namespace
+            return redirect('accounts:login')
     
-    return redirect('accounts:profile')  # ✅ Fixed: Added namespace
+    return redirect('accounts:profile')
 
 def logout_view(request):
     """User Logout View"""

@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Success - Coffee & Tea Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+  .success-page {
+    padding: 80px 20px;
+    background: var(--bg);
+    min-height: calc(100vh - 300px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .success-card {
+    background: white;
+    border-radius: 24px;
+    padding: 50px;
+    text-align: center;
+    max-width: 550px;
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+    animation: fadeInUp 0.5s ease;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background: #28a745;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    animation: scaleIn 0.5s ease 0.2s both;
+  }
+  
+  @keyframes scaleIn {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  
+  .success-icon i {
+    font-size: 40px;
+    color: white;
+  }
+  
+  .success-card h1 {
+    font-size: 2rem;
+    color: var(--fg);
+    margin-bottom: 10px;
+  }
+  
+  .success-card p {
+    color: var(--muted);
+    margin-bottom: 25px;
+  }
+  
+  .order-number {
+    background: var(--bg);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin: 25px 0;
+  }
+  
+  .order-number p {
+    color: var(--muted);
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+  }
+  
+  .order-number h3 {
+    color: var(--primary);
+    font-family: monospace;
+    font-size: 1.3rem;
+    margin-bottom: 0;
+  }
+  
+  .order-details {
+    text-align: left;
+    margin: 25px 0;
+    padding: 20px;
+    background: var(--bg);
+    border-radius: 16px;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+  
+  .detail-row span:first-child {
+    color: var(--muted);
+  }
+  
+  .detail-row span:last-child {
+    font-weight: 600;
+    color: var(--fg);
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-primary {
+    padding: 12px 28px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  .btn-outline {
+    padding: 12px 28px;
+    background: transparent;
+    color: var(--primary);
+    text-decoration: none;
+    border: 2px solid var(--primary);
+    border-radius: 30px;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn-outline:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  .delivery-note {
+    background: #e8f5e9;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--primary);
+  }
+  
+  @media (max-width: 768px) {
+    .success-card {
+      padding: 30px 20px;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+    }
+    
+    .btn-primary, .btn-outline {
+      text-align: center;
+      justify-content: center;
+    }
+    
+    .success-card h1 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="success-page">
+  <div class="success-card">
+    <div class="success-icon">
+      <i class="fas fa-check"></i>
+    </div>
+    
+    <h1>Order Placed Successfully! 🎉</h1>
+    <p>Thank you for your purchase. Your order has been received.</p>
+    
+    <div class="order-number">
+      <p>Order Number</p>
+      <h3>{{ order.order_number }}</h3>
+    </div>
+    
+    <div class="order-details">
+      <div class="detail-row">
+        <span>Order Date:</span>
+        <span>{{ order.created_at|date:"F j, Y, g:i a" }}</span>
+      </div>
+      <div class="detail-row">
+        <span>Payment Method:</span>
+        <span>{{ order.get_payment_method_display }}</span>
+      </div>
+      <div class="detail-row">
+        <span>Payment Status:</span>
+        <span style="color: #28a745; font-weight: 600;">
+          <i class="fas fa-check-circle"></i> {{ order.get_payment_status_display|title }}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span>Total Amount:</span>
+        <span style="font-size: 1.1rem; color: var(--primary);">रू {{ order.grand_total|floatformat:2 }}</span>
+      </div>
+    </div>
+    
+    <div class="delivery-note">
+      <i class="fas fa-truck"></i> Your order will be delivered within 3-5 business days.
+      You will receive a confirmation email shortly.
+    </div>
+    
+    <div class="action-buttons">
+      <a href="{% url 'orders:order_detail' order.id %}" class="btn-primary">
+        <i class="fas fa-eye"></i> View Order Details
+      </a>
+      <a href="/products/" class="btn-outline">
+        <i class="fas fa-coffee"></i> Continue Shopping
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

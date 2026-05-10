@@ -56,7 +56,8 @@ class RegistrationForm(UserCreationForm):
     terms = forms.BooleanField(
         required=True,
         widget=forms.CheckboxInput(attrs={'class': 'terms-checkbox'}),
-        label='I agree to the Terms of Service'
+        label='I agree to the Terms of Service',
+        error_messages={'required': 'You must agree to the Terms of Service to register.'}
     )
     
     class Meta:
@@ -74,6 +75,12 @@ class RegistrationForm(UserCreationForm):
         if CustomUser.objects.filter(username=username).exists():
             raise forms.ValidationError('Username already taken!')
         return username
+    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number and len(phone_number) < 10:
+            raise forms.ValidationError('Please enter a valid phone number (minimum 10 digits)')
+        return phone_number
     
     def save(self, commit=True):
         user = super().save(commit=False)

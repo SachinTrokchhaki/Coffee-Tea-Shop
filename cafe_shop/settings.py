@@ -131,6 +131,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom user model
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
+# Stripe Configuration (Test Mode)
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51TVPwiRfGMft6pAQooW6cmCeUWXpsUOxFhhpSONJcZlov2kLC9L5rgU7UzIrCxeklxHzikt9Pk4V9C663XLilEEf00xBpIrxRX'
+STRIPE_SECRET_KEY = 'sk_test_51TVPwiRfGMft6pAQrcOQ5m6SLrjt9CG9oxyUGqtn8xSIFKXswE2PWdNJdNY4abo2wxFiNE3zqCJrGT3JWfUouUOV003VXHNwrj'
+
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

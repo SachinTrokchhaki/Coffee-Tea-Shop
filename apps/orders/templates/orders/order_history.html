@@ -136,6 +136,12 @@
     background: var(--primary-dark);
   }
   
+  .view-details-btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
   .pay-now-btn {
     padding: 8px 20px;
     background: #0b4f6c;
@@ -148,6 +154,13 @@
   
   .pay-now-btn:hover {
     background: #0a3d55;
+  }
+  
+  .pay-now-btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: #6c757d;
   }
   
   .no-orders {
@@ -182,6 +195,16 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+  }
+  
+  .cancelled-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #dc3545;
+    color: white;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
   }
   
   @media (max-width: 768px) {
@@ -262,9 +285,19 @@
           <div class="action-buttons">
             <a href="{% url 'orders:order_detail' order.id %}" class="view-details-btn">View Details</a>
             
-            {% if order.payment_status == 'pending' %}
+            {% if order.status == 'cancelled' %}
+              <span class="cancelled-badge">
+                <i class="fas fa-ban"></i> Cancelled
+              </span>
+            {% elif order.payment_status == 'pending' %}
               {% if order.payment_method == 'cod' %}
-                <button class="pay-now-btn" onclick="markAsPaid({{ order.id }})">Confirm COD</button>
+                {% if user.is_staff or user.is_superuser %}
+                  <button class="pay-now-btn" onclick="markAsPaid({{ order.id }})">Confirm COD</button>
+                {% else %}
+                  <span class="cancelled-badge" style="background: #ffc107; color: #000;">
+                    <i class="fas fa-clock"></i> Awaiting Confirmation
+                  </span>
+                {% endif %}
               {% elif order.payment_method == 'esewa' %}
                 <a href="{% url 'orders:esewa_payment' order.id %}" class="pay-now-btn">Pay with Esewa</a>
               {% elif order.payment_method == 'khalti' %}
@@ -272,6 +305,10 @@
               {% elif order.payment_method == 'stripe' %}
                 <a href="{% url 'orders:stripe_payment' order.id %}" class="pay-now-btn">Pay with Card</a>
               {% endif %}
+            {% elif order.payment_status == 'paid' %}
+              <span class="cancelled-badge" style="background: #28a745;">
+                <i class="fas fa-check-circle"></i> Paid
+              </span>
             {% endif %}
           </div>
         </div>
@@ -291,7 +328,12 @@
 
 <script>
   function markAsPaid(orderId) {
-    if (confirm('Confirm that you have received the payment for COD?')) {
+    if (confirm('Confirm that you have received the payment for this order?')) {
+      const btn = event.target;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+      btn.disabled = true;
+      
       fetch(`/orders/mark-paid/${orderId}/`, {
         method: 'POST',
         headers: {
@@ -302,15 +344,19 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          alert('Order marked as paid!');
+          alert('✓ Payment confirmed! Order status updated.');
           location.reload();
         } else {
           alert('Failed to update order status');
+          btn.innerHTML = originalText;
+          btn.disabled = false;
         }
       })
       .catch(error => {
         console.error('Error:', error);
         alert('An error occurred');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
       });
     }
   }
@@ -330,4 +376,21 @@
     return cookieValue;
   }
 </script>
+
+<style>
+  .loading-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid white;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 0.6s linear infinite;
+    margin-right: 5px;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
 {% endblock %}

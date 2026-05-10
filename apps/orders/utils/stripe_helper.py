@@ -1,21 +1,27 @@
 import stripe
 from django.conf import settings
 
-# Stripe Configuration
-stripe.api_key = "sk_test_your_stripe_secret_key"
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def create_stripe_payment_intent(order):
-    """Create Stripe payment intent"""
+    """
+    Create a Stripe Payment Intent for the order
+    """
     try:
+        # For NPR, multiply by 100 to convert to paisa/smallest unit
+        amount = int(order.grand_total * 100)
+        
         intent = stripe.PaymentIntent.create(
-            amount=int(order.grand_total * 100),  # Convert to cents
-            currency='npr',  # Nepalese Rupee
+            amount=amount,
+            currency='npr',
             metadata={
                 'order_id': order.order_number,
+                'customer_name': order.full_name,
                 'customer_email': order.email,
-                'customer_name': order.full_name
-            }
+            },
+            description=f"Order #{order.order_number} - Coffee & Tea Shop",
         )
+        
         return {
             'success': True,
             'client_secret': intent.client_secret,
@@ -28,13 +34,13 @@ def create_stripe_payment_intent(order):
         }
 
 def verify_stripe_payment(payment_intent_id):
-    """Verify Stripe payment"""
+    """Verify Stripe payment status"""
     try:
         intent = stripe.PaymentIntent.retrieve(payment_intent_id)
         return {
             'success': True,
             'status': intent.status,
-            'amount': intent.amount / 100
+            'amount': intent.amount,
         }
     except stripe.error.StripeError as e:
         return {

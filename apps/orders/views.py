@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -124,19 +125,54 @@ def checkout_view(request):
     }
     return render(request, 'orders/checkout.html', context)
 
-
 def order_success(request, order_id):
-    """Order success page"""
+    """Order success page - Auto update payment status"""
     order = get_object_or_404(Order, id=order_id)
+    
+    # If order has payment_id but payment_status is still pending,
+    # it means payment was successful (since user reached this page)
+    if order.payment_id and order.payment_status == 'pending':
+        order.payment_status = 'paid'
+        order.status = 'confirmed'
+        order.save()
+        print(f"✅ Order #{order.order_number} marked as PAID automatically")
+    
     return render(request, 'orders/order_success.html', {'order': order})
 
+@login_required
+def cancel_order(request, order_id):
+    """Cancel an order"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    if request.method == 'POST':
+        if order.status == 'pending' and order.payment_status != 'paid':
+            order.status = 'cancelled'
+            order.save()
+            return JsonResponse({'success': True, 'message': 'Order cancelled successfully'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Order cannot be cancelled'})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+@login_required
+def mark_order_delivered(request, order_id):
+    """Mark COD order as delivered and paid (Admin only)"""
+    order = get_object_or_404(Order, id=order_id)
+    
+    if request.user.is_staff or request.user.is_superuser:
+        if request.method == 'POST':
+            order.payment_status = 'paid'
+            order.status = 'delivered'
+            order.save()
+            return JsonResponse({'success': True, 'message': 'Order marked as delivered'})
+    
+    return JsonResponse({'success': False, 'message': 'Unauthorized'})
 
 @login_required
 def order_history(request):
     """User order history"""
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'orders/order_history.html', {'orders': orders})
-
 
 @login_required
 def order_detail(request, order_id):
@@ -168,13 +204,11 @@ def cod_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'orders/payment/cod.html', {'order': order})
 
-
 @login_required
 def esewa_payment(request, order_id):
     """Esewa payment page"""
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'orders/payment/esewa.html', {'order': order})
-
 
 @login_required
 def khalti_payment(request, order_id):
@@ -183,8 +217,92 @@ def khalti_payment(request, order_id):
     return render(request, 'orders/payment/khalti.html', {'order': order})
 
 
+#for stripe payment
+from .utils.stripe_helper import create_stripe_payment_intent
+
 @login_required
 def stripe_payment(request, order_id):
     """Stripe payment page"""
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    return render(request, 'orders/payment/stripe.html', {'order': order})
+    
+    # Debug prints
+    print("=" * 50)
+    print("STRIPE PAYMENT DEBUG")
+    print(f"Order ID: {order.id}")
+    print(f"Order Total: {order.grand_total}")
+    print(f"Order Number: {order.order_number}")
+    
+    try:
+        # Create payment intent
+        result = create_stripe_payment_intent(order)
+        
+        print(f"Result: {result}")
+        
+        if not result['success']:
+            print(f"ERROR: {result['error']}")
+            messages.error(request, f"Payment initialization failed: {result['error']}")
+            return redirect('orders:order_detail', order_id=order.id)
+        
+        # Save payment_intent_id to order (using payment_id field)
+        order.payment_id = result['payment_intent_id']
+        order.save()
+        
+        context = {
+            'order': order,
+            'stripe_public_key': settings.STRIPE_PUBLISHABLE_KEY,
+            'client_secret': result['client_secret'],
+        }
+        return render(request, 'orders/payment/stripe.html', context)
+        
+    except Exception as e:
+        import traceback
+        print(f"EXCEPTION: {str(e)}")
+        print(traceback.format_exc())
+        messages.error(request, f"Stripe Error: {str(e)}")
+        return redirect('orders:order_detail', order_id=order.id)
+
+@login_required
+def stripe_success(request):
+    """Stripe payment success callback"""
+    payment_intent_id = request.GET.get('payment_intent')
+    
+    if payment_intent_id:
+        # Find order by payment_id (which stores the payment_intent_id)
+        order = Order.objects.filter(payment_id=payment_intent_id).first()
+        
+        if order:
+            order.payment_status = 'paid'
+            order.status = 'confirmed'
+            order.save()
+            
+            messages.success(request, f'Payment successful! Your order #{order.order_number} has been confirmed.')
+            return redirect('orders:order_success', order_id=order.id)
+    
+    messages.error(request, 'Payment failed! Please try again.')
+    return redirect('orders:checkout')
+
+@login_required
+def stripe_webhook(request):
+    """Stripe webhook for payment confirmation"""
+    import json
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError:
+        return JsonResponse({'error': 'Invalid payload'}, status=400)
+    except stripe.error.SignatureVerificationError:
+        return JsonResponse({'error': 'Invalid signature'}, status=400)
+    
+    # Handle the event
+    if event['type'] == 'payment_intent.succeeded':
+        payment_intent = event['data']['object']
+        # Find order by payment_intent_id and update status
+        # You'll need to store payment_intent_id when creating the intent
+        
+    return JsonResponse({'status': 'success'})
+
+

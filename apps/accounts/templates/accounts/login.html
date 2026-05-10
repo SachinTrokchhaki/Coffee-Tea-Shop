@@ -233,18 +233,62 @@
     border-radius: 12px;
     background: white;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 500;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+    font-family: 'DM Sans', sans-serif;
   }
   
-  .social-btn:hover {
-    background: var(--bg);
-    border-color: var(--primary);
+  .social-btn i {
+    font-size: 18px;
+  }
+  
+  /* Google Button */
+  .google-btn {
+    background: white;
+    border-color: #db4437;
+    color: #db4437;
+  }
+  
+  .google-btn i {
+    color: #db4437;
+  }
+  
+  .google-btn:hover {
+    background: #db4437;
+    border-color: #db4437;
+    color: white;
     transform: translateY(-2px);
+  }
+  
+  .google-btn:hover i {
+    color: white;
+  }
+  
+  /* Facebook Button */
+  .facebook-btn {
+    background: white;
+    border-color: #1877f2;
+    color: #1877f2;
+  }
+  
+  .facebook-btn i {
+    color: #1877f2;
+  }
+  
+  .facebook-btn:hover {
+    background: #1877f2;
+    border-color: #1877f2;
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  .facebook-btn:hover i {
+    color: white;
   }
   
   .register-link {
@@ -261,6 +305,19 @@
   
   .register-link a:hover {
     text-decoration: underline;
+  }
+  
+  /* Django form error styling */
+  .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+    font-size: 12px;
+    color: #dc2626;
+  }
+  
+  .errorlist li {
+    margin-bottom: 3px;
   }
   
   @keyframes float {
@@ -331,16 +388,16 @@
         </div>
         
         <div class="social-login">
-          <button class="social-btn google-btn" onclick="alert('Google login coming soon!')">
-            <i class="fab fa-google"></i>Google
+          <button type="button" class="social-btn google-btn" onclick="alert('Google login coming soon!')">
+            <i class="fab fa-google"></i> Google
           </button>
-          <button class="social-btn" onclick="alert('Facebook login coming soon!')">
-            <i class="fab fa-facebook-f"></i>Facebook
+          <button type="button" class="social-btn facebook-btn" onclick="alert('Facebook login coming soon!')">
+            <i class="fab fa-facebook-f"></i> Facebook
           </button>
         </div>
         
         <div class="register-link">
-          New to Coffee & Tea Shop? <a href="/accounts/register/">Create an account</a>
+          New to Coffee & Tea Shop? <a href="{% url 'accounts:register' %}">Create an account</a>
         </div>
       </div>
     </div>

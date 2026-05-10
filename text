@@ -19,3 +19,11 @@ pip install Pillow
 
 #admin
 Test@Admin1
+
+#payment
+pip install stripe
+
+4242 4242 4242 4242
+12/28
+123
+12345

@@ -363,12 +363,12 @@
           {% csrf_token %}
           
           <!-- Full Name -->
-          <div class="input-group {% if form.fullname.errors %}field-error{% endif %}">
+          <div class="input-group {% if form.full_name.errors %}field-error{% endif %}">
             <label>Full Name</label>
-            <input type="text" name="fullname" value="{{ form.fullname.value|default:'' }}" placeholder="Enter your full name" required>
+            <input type="text" name="full_name" value="{{ form.full_name.value|default:'' }}" placeholder="Enter your full name" required>
             <span class="input-icon">👤</span>
-            {% if form.fullname.errors %}
-              {{ form.fullname.errors }}
+            {% if form.full_name.errors %}
+              {{ form.full_name.errors }}
             {% endif %}
           </div>
           
@@ -382,6 +382,16 @@
             {% endif %}
           </div>
           
+          <!-- Phone Number (Optional) -->
+          <div class="input-group {% if form.phone_number.errors %}field-error{% endif %}">
+            <label>Phone Number (Optional)</label>
+            <input type="tel" name="phone_number" value="{{ form.phone_number.value|default:'' }}" placeholder="Enter your phone number">
+            <span class="input-icon">📱</span>
+            {% if form.phone_number.errors %}
+              {{ form.phone_number.errors }}
+            {% endif %}
+          </div>
+          
           <!-- Username -->
           <div class="input-group {% if form.username.errors %}field-error{% endif %}">
             <label>Username</label>
@@ -392,23 +402,23 @@
             {% endif %}
           </div>
           
-          <!-- Password -->
-          <div class="input-group {% if form.password.errors %}field-error{% endif %}">
+          <!-- Password (password1) -->
+          <div class="input-group {% if form.password1.errors %}field-error{% endif %}">
             <label>Password</label>
-            <input type="password" name="password" placeholder="Create a password" required>
+            <input type="password" name="password1" placeholder="Create a password" required>
             <span class="input-icon">🔒</span>
-            {% if form.password.errors %}
-              {{ form.password.errors }}
+            {% if form.password1.errors %}
+              {{ form.password1.errors }}
             {% endif %}
           </div>
           
-          <!-- Confirm Password -->
-          <div class="input-group {% if form.confirm_password.errors %}field-error{% endif %}">
+          <!-- Confirm Password (password2) -->
+          <div class="input-group {% if form.password2.errors %}field-error{% endif %}">
             <label>Confirm Password</label>
-            <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+            <input type="password" name="password2" placeholder="Confirm your password" required>
             <span class="input-icon">✓</span>
-            {% if form.confirm_password.errors %}
-              {{ form.confirm_password.errors }}
+            {% if form.password2.errors %}
+              {{ form.password2.errors }}
             {% endif %}
           </div>
           
@@ -439,7 +449,7 @@
         </div>
         
         <div class="login-link">
-          Already have an account? <a href="/accounts/login/">Sign in</a>
+          Already have an account? <a href="{% url 'accounts:login' %}">Sign in</a>
         </div>
       </div>
     </div>
