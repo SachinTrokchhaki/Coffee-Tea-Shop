@@ -10,6 +10,11 @@ from .models import Order, OrderItem
 from apps.cart.views import get_cart
 from apps.cart.models import CartItem
 
+from .utils.esewa import prepare_esewa_payment, verify_esewa_payment, ESEWA_TEST_URL
+from .utils.khalti import initiate_khalti_payment, verify_khalti_payment
+from .utils.esewa import prepare_esewa_payment, verify_esewa_payment, ESEWA_TEST_URL
+from .utils.khalti import initiate_khalti_payment, verify_khalti_payment
+
 # CHECKOUT VIEW - LOGIN REQUIRED
 @login_required
 def checkout_view(request):
@@ -204,18 +209,104 @@ def cod_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'orders/payment/cod.html', {'order': order})
 
+#for esewa
 @login_required
 def esewa_payment(request, order_id):
-    """Esewa payment page"""
+    """Esewa payment page - Demo version (no API call)"""
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    return render(request, 'orders/payment/esewa.html', {'order': order})
+    
+    context = {
+        'order': order,
+    }
+    return render(request, 'orders/payment/esewa.html', context)
 
+@csrf_exempt
+def esewa_success(request):
+    """Esewa payment success callback - Demo version"""
+    print("=" * 50)
+    print("ESEWA SUCCESS CALLED")
+    
+    if request.method == 'POST':
+        mobile = request.POST.get('mobile')
+        pin = request.POST.get('pin')
+        order_id = request.POST.get('order_id')
+        
+        print(f"Mobile: {mobile}")
+        print(f"PIN: {pin}")
+        print(f"Order ID: {order_id}")
+        
+        # Demo credentials
+        if order_id and mobile == '9800000000' and pin == '1111':
+            try:
+                order = Order.objects.get(id=order_id)
+                order.payment_status = 'paid'
+                order.status = 'confirmed'
+                order.payment_id = f"ESEWA_DEMO_{order.order_number}"
+                order.save()
+                
+                print(f"✅ Order #{order.order_number} marked as PAID")
+                messages.success(request, 'Payment successful! Your order has been confirmed.')
+                return redirect('orders:order_success', order_id=order.id)
+            except Order.DoesNotExist:
+                print(f"Order with ID {order_id} not found!")
+    
+    messages.error(request, 'Payment failed! Please try again.')
+    return redirect('orders:checkout')
+
+def esewa_failure(request):
+    """Esewa payment failure callback"""
+    messages.error(request, 'Payment failed! Please try again.')
+    return redirect('orders:checkout')
+
+#for khalti
 @login_required
 def khalti_payment(request, order_id):
-    """Khalti payment page"""
+    """Khalti payment page - Demo version"""
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    return render(request, 'orders/payment/khalti.html', {'order': order})
+    
+    context = {
+        'order': order,
+    }
+    return render(request, 'orders/payment/khalti.html', context)
 
+@csrf_exempt
+def khalti_success(request):
+    """Khalti payment success callback - Demo version"""
+    print("=" * 50)
+    print("KHALTI SUCCESS CALLED")
+    print(f"Request Method: {request.method}")
+    print(f"POST Data: {request.POST}")
+    
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        mobile = request.POST.get('mobile')
+        otp = request.POST.get('otp')
+        
+        print(f"Order ID: {order_id}")
+        print(f"Mobile: {mobile}")
+        print(f"OTP: {otp}")
+        
+        if order_id and mobile == '9800000000' and otp == '11111':
+            try:
+                order = Order.objects.get(id=order_id)
+                print(f"Found Order: {order.order_number}")
+                
+                order.payment_status = 'paid'
+                order.status = 'confirmed'
+                order.payment_id = f"KHALTI_DEMO_{order.order_number}"
+                order.save()
+                
+                print(f"Order #{order.order_number} marked as PAID")
+                messages.success(request, 'Payment successful! Your order has been confirmed.')
+                return redirect('orders:order_success', order_id=order.id)
+            except Order.DoesNotExist:
+                print(f"Order with ID {order_id} not found!")
+        else:
+            print("Invalid credentials or missing data")
+    
+    print("Redirecting to checkout due to failure")
+    messages.error(request, 'Payment failed! Please try again.')
+    return redirect('orders:checkout')
 
 #for stripe payment
 from .utils.stripe_helper import create_stripe_payment_intent

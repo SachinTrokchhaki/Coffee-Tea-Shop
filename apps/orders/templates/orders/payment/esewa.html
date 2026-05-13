@@ -1,143 +1,476 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Pay with Esewa - Coffee & Tea Shop{% endblock %}
+{% block title %}Esewa Payment - Coffee & Tea Shop{% endblock %}
 
 {% block extra_css %}
 <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   .payment-page {
-    padding: 60px 20px;
-    background: var(--bg);
-    min-height: calc(100vh - 300px);
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0b4f6c 0%, #0a6b8a 100%);
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 40px 20px;
   }
-  
-  .payment-container {
-    max-width: 500px;
+
+  .esewa-container {
+    max-width: 480px;
     width: 100%;
+    animation: slideUp 0.5s ease;
   }
-  
-  .payment-card {
-    background: white;
-    border-radius: 20px;
-    padding: 40px;
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .esewa-header {
     text-align: center;
-    box-shadow: var(--shadow);
-  }
-  
-  .payment-icon {
-    font-size: 70px;
     margin-bottom: 20px;
   }
-  
-  .payment-card h2 {
+
+  .esewa-logo {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+
+  .esewa-logo i {
+    font-size: 32px;
+    color: #0b4f6c;
+  }
+
+  .esewa-header h2 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .esewa-header p {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.85rem;
+  }
+
+  .payment-card {
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+  }
+
+  .order-summary {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .order-summary h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 15px;
+  }
+
+  .product-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .product-item:last-child {
+    border-bottom: none;
+  }
+
+  .product-img {
+    width: 55px;
+    height: 55px;
+    background: #e8f4f8;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-img i {
+    font-size: 28px;
+    color: #0b4f6c;
+  }
+
+  .product-details {
+    flex: 1;
+  }
+
+  .product-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+
+  .product-meta {
+    font-size: 0.7rem;
+    color: #999;
+  }
+
+  .product-price {
+    font-weight: 700;
+    color: #0b4f6c;
+  }
+
+  .amount-summary {
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 0.9rem;
+  }
+
+  .summary-row.total {
+    border-top: 1px solid #ddd;
+    margin-top: 8px;
+    padding-top: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #0b4f6c;
+  }
+
+  .billed-to {
+    padding: 20px;
+    background: #f0f9ff;
+    border-bottom: 1px solid #eee;
+  }
+
+  .billed-to h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #0b4f6c;
     margin-bottom: 10px;
   }
-  
-  .amount {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin: 15px 0;
+
+  .billed-to p {
+    font-size: 0.9rem;
+    color: #555;
   }
-  
-  .esewa-info {
-    background: linear-gradient(135deg, #0b4f6c, #0a6b8a);
-    color: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin: 20px 0;
+
+  .payment-form {
+    padding: 25px;
   }
-  
-  .esewa-info input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    margin-top: 10px;
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #888;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .input-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
     font-size: 16px;
   }
-  
+
+  .form-group input {
+    width: 100%;
+    padding: 14px 15px 14px 45px;
+    border: 2px solid #e8e8e8;
+    border-radius: 14px;
+    font-size: 16px;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.3s;
+    background: white;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: #0b4f6c;
+    box-shadow: 0 0 0 3px rgba(11,79,108,0.1);
+  }
+
   .pay-btn {
     width: 100%;
-    padding: 14px;
-    background: #0b4f6c;
+    padding: 16px;
+    background: linear-gradient(135deg, #0b4f6c, #0a6b8a);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 50px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 20px;
     transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
   }
-  
+
   .pay-btn:hover {
-    background: #0a3d55;
     transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(11,79,108,0.3);
   }
-  
-  .demo-note {
-    background: #fff3cd;
-    padding: 12px;
-    border-radius: 8px;
-    margin-top: 20px;
-    font-size: 12px;
-    color: #856404;
+
+  .pay-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
-  
-  .back-link {
-    display: block;
+
+  .footer-links {
+    padding: 20px 25px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
     text-align: center;
-    margin-top: 15px;
-    color: var(--primary);
+  }
+
+  .footer-links a {
+    color: #0b4f6c;
     text-decoration: none;
+    font-size: 0.8rem;
+    margin: 0 10px;
+  }
+
+  .test-info {
+    background: #e8f5e9;
+    padding: 12px 15px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-size: 0.7rem;
+    text-align: center;
+  }
+
+  .test-info strong {
+    color: #2e7d32;
+  }
+
+  .payment-powered {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+    font-size: 0.7rem;
+    color: #999;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+
+  .loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid white;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 480px) {
+    .payment-form {
+      padding: 20px;
+    }
   }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="payment-page">
-  <div class="payment-container">
-    <div class="payment-card">
-      <div class="payment-icon">
-        <img src="{% static 'images/esewa.png' %}" alt="Esewa" style="height: 60px;" onerror="this.innerHTML='🏦'">
+  <div class="esewa-container">
+    <div class="esewa-header">
+      <div class="esewa-logo">
+        <i class="fas fa-wallet"></i>
       </div>
-      <h2>Pay with Esewa</h2>
-      <p>Secure payment via Esewa wallet</p>
-      
-      <div class="amount">
-        रू {{ order.grand_total|floatformat:2 }}
-      </div>
-      
-      <div class="esewa-info">
-        <p><i class="fas fa-mobile-alt"></i> Enter your Esewa registered mobile number</p>
-        <input type="tel" placeholder="98XXXXXXXX" id="mobileNumber">
-      </div>
-      
-      <button class="pay-btn" id="payBtn">
-        Pay with Esewa 💳
-      </button>
-      
-      <div class="demo-note">
-        <i class="fas fa-info-circle"></i> Demo Mode: This will redirect to Esewa payment gateway in production.
-      </div>
-      
-      <a href="{% url 'orders:checkout' %}" class="back-link">← Back to Checkout</a>
+      <h2>Esewa</h2>
+      <p>Digital Wallet - Pay Fast, Pay Easy</p>
     </div>
+
+    <div class="payment-card">
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <h3><i class="fas fa-receipt"></i> Order Details</h3>
+        {% for item in order.items.all %}
+        <div class="product-item">
+          <div class="product-img">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product_name }}">
+            {% else %}
+              <i class="fas fa-coffee"></i>
+            {% endif %}
+          </div>
+          <div class="product-details">
+            <div class="product-name">{{ item.product_name }}</div>
+            <div class="product-meta">Quantity: {{ item.quantity }}</div>
+          </div>
+          <div class="product-price">रू {{ item.total|floatformat:2 }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Amount Summary -->
+      <div class="amount-summary">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>रू {{ order.total_amount|floatformat:2 }}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total Payable Amount</span>
+          <span>रू {{ order.grand_total|floatformat:2 }}</span>
+        </div>
+      </div>
+
+      <!-- Billed To -->
+      <div class="billed-to">
+        <h3><i class="fas fa-user"></i> Billed To</h3>
+        <p><strong>{{ order.full_name }}</strong></p>
+        <p>{{ order.address }}, {{ order.city }}</p>
+      </div>
+
+      <!-- Payment Form -->
+      <div class="payment-form">
+        <form method="post" action="{% url 'orders:esewa_success' %}" id="esewaForm">
+          {% csrf_token %}
+          
+          <div class="form-group">
+            <label>Esewa Mobile Number</label>
+            <div class="input-wrapper">
+              <i class="fas fa-mobile-alt"></i>
+              <input type="tel" name="mobile" id="mobile" placeholder="98XXXXXXXX" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>PIN / Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock"></i>
+              <input type="password" name="pin" id="pin" placeholder="Enter 4-digit PIN" required maxlength="4">
+            </div>
+          </div>
+          
+          <input type="hidden" name="order_id" value="{{ order.id }}">
+          
+          <button type="submit" class="pay-btn" id="payBtn">
+            <i class="fas fa-lock"></i> Pay रू {{ order.grand_total|floatformat:2 }}
+          </button>
+        </form>
+
+        <div class="test-info">
+          <strong>🧪 Test Credentials:</strong><br>
+          Mobile: <strong>9800000000</strong> | PIN: <strong>1111</strong>
+        </div>
+      </div>
+
+      <div class="payment-powered">
+        <i class="fas fa-shield-alt"></i> Payment Powered By Esewa
+      </div>
+
+      <div class="footer-links">
+        <a href="#">Forgot PIN?</a>
+        <a href="#">Register for Esewa</a>
+        <a href="#">Help</a>
+      </div>
+    </div>
+
+    <a href="{% url 'orders:order_detail' order.id %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Order
+    </a>
   </div>
 </section>
 
 <script>
-  document.getElementById('payBtn').addEventListener('click', function() {
-    const mobile = document.getElementById('mobileNumber').value;
-    if (!mobile) {
-      alert('Please enter your Esewa registered mobile number');
-      return;
+  document.getElementById('esewaForm').addEventListener('submit', function(e) {
+    const mobile = document.getElementById('mobile').value;
+    const pin = document.getElementById('pin').value;
+    
+    if (!mobile || !pin) {
+      e.preventDefault();
+      alert('❌ Please enter both Mobile Number and PIN');
+      return false;
     }
-    alert('🎉 Esewa Payment Demo!\n\nAmount: रू {{ order.grand_total|floatformat:2 }}\nMobile: ' + mobile + '\n\nThis will redirect to Esewa payment gateway in production.');
+    
+    const mobileRegex = /^[0-9]{10}$/;
+    if (!mobileRegex.test(mobile)) {
+      e.preventDefault();
+      alert('❌ Please enter a valid 10-digit mobile number');
+      return false;
+    }
+    
+    const pinRegex = /^[0-9]{4}$/;
+    if (!pinRegex.test(pin)) {
+      e.preventDefault();
+      alert('❌ Please enter a valid 4-digit PIN');
+      return false;
+    }
+    
+    if (mobile !== '9800000000' || pin !== '1111') {
+      e.preventDefault();
+      alert('❌ Invalid credentials!\n\nTest Mode Credentials:\nMobile: 9800000000\nPIN: 1111');
+      return false;
+    }
+    
+    const btn = document.getElementById('payBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading"></span> Processing Payment...';
+  });
+  
+  document.getElementById('mobile').value = '';
+  document.getElementById('pin').value = '';
+  
+  document.getElementById('pin').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);
   });
 </script>
 {% endblock %}

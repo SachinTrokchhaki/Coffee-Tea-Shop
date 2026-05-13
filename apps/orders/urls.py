@@ -15,10 +15,16 @@ urlpatterns = [
     # Payment action URLs
     path('mark-paid/<int:order_id>/', views.mark_order_paid, name='mark_order_paid'),
     
-    
     # Payment pages with dedicated UI
     path('payment/cod/<int:order_id>/', views.cod_payment, name='cod_payment'),
-    path('payment/esewa/<int:order_id>/', views.esewa_payment, name='esewa_payment'),
-    path('payment/khalti/<int:order_id>/', views.khalti_payment, name='khalti_payment'),
     path('payment/stripe/<int:order_id>/', views.stripe_payment, name='stripe_payment'),
+    
+    # Esewa Payment URLs
+    path('payment/esewa/<int:order_id>/', views.esewa_payment, name='esewa_payment'),
+    path('payment/esewa/success/', views.esewa_success, name='esewa_success'),
+    path('payment/esewa/failure/', views.esewa_failure, name='esewa_failure'),
+    
+    # Khalti Payment URLs
+    path('payment/khalti/<int:order_id>/', views.khalti_payment, name='khalti_payment'),
+    path('payment/khalti/success/', views.khalti_success, name='khalti_success'),
 ]

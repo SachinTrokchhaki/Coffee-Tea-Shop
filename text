@@ -22,8 +22,19 @@ Test@Admin1
 
 #payment
 pip install stripe
+pip install requests
 
+#for stripe
 4242 4242 4242 4242
 12/28
 123
 12345
+
+#for esewa
+9800000000
+1111
+111111
+
+#for khalti
+9800000000
+11111
