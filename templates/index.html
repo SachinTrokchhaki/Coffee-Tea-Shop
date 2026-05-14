@@ -26,6 +26,215 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
   
+  .product-badge.hot {
+    background: #ff6b35;
+  }
+
+  .product-badge.new {
+    background: #28a745;
+  }
+
+  /* Deal of the Day Styles */
+  .deal-section {
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #f5f0e8 0%, #e8e0d5 100%);
+  }
+
+  .deal-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    max-width: 1000px;
+    margin: 0 auto;
+    transition: transform 0.3s;
+  }
+
+  .deal-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .deal-content {
+    flex: 1;
+    padding: 40px;
+  }
+
+  .deal-badge {
+    display: inline-block;
+    background: #ff6b35;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 25px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  .deal-content h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  .deal-content h3 {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+  }
+
+  .deal-content p {
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .deal-price {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .old-price {
+    font-size: 1.2rem;
+    color: #999;
+    text-decoration: line-through;
+  }
+
+  .new-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff6b35;
+  }
+
+  .deal-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #ff6b35, #ff8c42);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .deal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255,107,53,0.3);
+  }
+
+  .deal-image {
+    flex: 1;
+    padding: 40px;
+    text-align: center;
+    background: linear-gradient(135deg, #fff5eb, #fff);
+  }
+
+  .deal-image img {
+    max-width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+  }
+
+  .deal-image i {
+    font-size: 120px;
+    color: #ff6b35;
+    opacity: 0.8;
+  }
+
+  /* Personalized Section */
+  .personalized-section {
+    padding: 60px 20px;
+    background: var(--bg);
+  }
+
+  /* Horizontal Scroll Carousel */
+  .carousel-container {
+    position: relative;
+    margin: 40px 0;
+  }
+
+  .carousel-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding: 10px 0;
+  }
+
+  .carousel-wrapper::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .carousel-wrapper::-webkit-scrollbar-track {
+    background: var(--border);
+    border-radius: 10px;
+  }
+
+  .carousel-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+  }
+
+  .carousel-grid {
+    display: flex;
+    gap: 25px;
+    width: max-content;
+  }
+
+  .carousel-grid .product-card {
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  /* Carousel Arrows */
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .carousel-arrow:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  .carousel-arrow.prev {
+    left: -20px;
+  }
+
+  .carousel-arrow.next {
+    right: -20px;
+  }
+
+  .carousel-arrow.hidden {
+    display: none;
+  }
+
+  /* All Products Grid */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
   @keyframes slideInRight {
     from {
       transform: translateX(100%);
@@ -34,6 +243,61 @@
     to {
       transform: translateX(0);
       opacity: 1;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .products-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .carousel-arrow {
+      display: none;
+    }
+    
+    .carousel-grid .product-card {
+      width: 240px;
+    }
+    
+    .deal-card {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .deal-content {
+      padding: 30px;
+    }
+    
+    .deal-price {
+      justify-content: center;
+    }
+    
+    .deal-image {
+      padding: 30px;
+    }
+    
+    .deal-content h2 {
+      font-size: 1.5rem;
+    }
+    
+    .deal-content h3 {
+      font-size: 1.2rem;
+    }
+    
+    .new-price {
+      font-size: 1.5rem;
+    }
+    
+    .products-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .carousel-grid .product-card {
+      width: 200px;
     }
   }
 </style>
@@ -86,15 +350,189 @@
   </div>
 </section>
 
-<!-- Menu Section -->
+<!-- SECTION 1: DEAL OF THE DAY -->
+{% if deal_of_the_day %}
+<section class="deal-section">
+  <div class="container">
+    <div class="deal-card">
+      <div class="deal-content">
+        <span class="deal-badge">🔥 LIMITED TIME OFFER</span>
+        <h2>Deal of the Day</h2>
+        <h3>{{ deal_of_the_day.name }}</h3>
+        <p>{{ deal_of_the_day.description|truncatewords:15 }}</p>
+        <div class="deal-price">
+          <span class="old-price">रू {{ deal_of_the_day.price|add:150 }}</span>
+          <span class="new-price">रू {{ deal_of_the_day.price|floatformat:2 }}</span>
+        </div>
+        <button class="deal-btn" onclick="addToCartAndRedirect({{ deal_of_the_day.id }}, '{{ deal_of_the_day.name }}')">
+          Grab Deal Now 🎯
+        </button>
+      </div>
+      <div class="deal-image">
+        {% if deal_of_the_day.image %}
+          <img src="{{ deal_of_the_day.image.url }}" alt="{{ deal_of_the_day.name }}">
+        {% else %}
+          <i class="fas fa-gift"></i>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- SECTION 2: BESTSELLERS CAROUSEL -->
+{% if bestsellers %}
+<section class="bestsellers-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-subtitle">🔥 Hot This Week</span>
+      <h2>Bestsellers</h2>
+      <p>Our most loved coffee and tea selections</p>
+    </div>
+    
+    <div id="bestsellersCarousel" class="carousel-container">
+      <div class="carousel-arrow prev">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="carousel-grid">
+          {% for product in bestsellers %}
+          <div class="product-card">
+            <div class="product-image">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+              {% else %}
+                <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.name }}">
+              {% endif %}
+              <span class="product-badge hot">🔥 Bestseller</span>
+            </div>
+            <div class="product-card-body">
+              <h3>{{ product.name }}</h3>
+              <p class="desc">{{ product.description|truncatewords:10 }}</p>
+              <div class="product-footer">
+                <span class="price">रू {{ product.price|floatformat:2 }}</span>
+                <button class="add-to-cart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="carousel-arrow next">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- SECTION 3: NEW ARRIVALS CAROUSEL -->
+{% if new_arrivals %}
+<section class="new-arrivals-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-subtitle">✨ Just In</span>
+      <h2>New Arrivals</h2>
+      <p>Fresh from our roastery</p>
+    </div>
+    
+    <div id="newArrivalsCarousel" class="carousel-container">
+      <div class="carousel-arrow prev">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="carousel-grid">
+          {% for product in new_arrivals %}
+          <div class="product-card">
+            <div class="product-image">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+              {% else %}
+                <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.name }}">
+              {% endif %}
+              <span class="product-badge new">New</span>
+            </div>
+            <div class="product-card-body">
+              <h3>{{ product.name }}</h3>
+              <p class="desc">{{ product.description|truncatewords:10 }}</p>
+              <div class="product-footer">
+                <span class="price">रू {{ product.price|floatformat:2 }}</span>
+                <button class="add-to-cart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="carousel-arrow next">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- SECTION 4: PERSONALIZED RECOMMENDATIONS CAROUSEL -->
+{% if user.is_authenticated and personalized %}
+<section class="personalized-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-subtitle">🎯 Just For You</span>
+      <h2>Recommended</h2>
+      <p>Based on your taste</p>
+    </div>
+    
+    <div id="personalizedCarousel" class="carousel-container">
+      <div class="carousel-arrow prev">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="carousel-grid">
+          {% for product in personalized %}
+          <div class="product-card">
+            <div class="product-image">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+              {% else %}
+                <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.name }}">
+              {% endif %}
+            </div>
+            <div class="product-card-body">
+              <h3>{{ product.name }}</h3>
+              <p class="desc">{{ product.description|truncatewords:10 }}</p>
+              <div class="product-footer">
+                <span class="price">रू {{ product.price|floatformat:2 }}</span>
+                <button class="add-to-cart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="carousel-arrow next">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- SECTION 5: ALL PRODUCTS WITH GRID -->
 <section class="menu" id="menuSection">
   <div class="container">
     <div class="section-header">
       <span class="section-subtitle">Our Collection</span>
-      <h2>Popular Menu</h2>
-      <p>Discover our most loved coffee and tea selections</p>
+      <h2>All Products</h2>
+      <p>Discover our complete range of coffee and tea</p>
     </div>
-    <div class="menu-grid">
+    
+    <div class="products-grid">
       {% for product in products %}
       <div class="product-card">
         <div class="product-image">
@@ -103,18 +541,13 @@
           {% else %}
             <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.name }}" onerror="this.src='https://placehold.co/400x300/2d5a3d/white?text={{ product.name|urlencode }}'">
           {% endif %}
-          {% if product.featured %}
-            <span class="product-badge">Featured</span>
-          {% elif forloop.counter == 1 %}
-            <span class="product-badge">Bestseller</span>
-          {% endif %}
         </div>
         <div class="product-card-body">
           <h3>{{ product.name }}</h3>
           {% if product.category %}
             <span class="category-label">{{ product.category.name }}</span>
           {% endif %}
-          <p class="desc">{{ product.description|truncatewords:15 }}</p>
+          <p class="desc">{{ product.description|truncatewords:12 }}</p>
           <div class="product-footer">
             <span class="price">रू {{ product.price|floatformat:2 }}</span>
             <button class="add-to-cart" 
@@ -251,6 +684,28 @@
     }
   }
   
+  // Deal of the Day - Add to cart and redirect
+  function addToCartAndRedirect(productId, productName) {
+    fetch(`/cart/add/${productId}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showNotification(`${productName} added to cart! 🛒`);
+        updateCartCount(data.cart_total);
+        setTimeout(() => {
+          window.location.href = '/cart/';
+        }, 1000);
+      }
+    });
+  }
+  
   // Add to cart functionality
   document.querySelectorAll('.add-to-cart').forEach(btn => {
     btn.addEventListener('click', function(e) {
@@ -258,7 +713,6 @@
       const productName = this.dataset.productName;
       const productId = this.dataset.productId;
       
-      // Send AJAX request to add to cart
       fetch(`/cart/add/${productId}/`, {
         method: 'POST',
         headers: {
@@ -295,5 +749,64 @@
       }
     });
   }
+  
+  // ============================================
+  // HORIZONTAL SCROLL CAROUSEL FUNCTIONALITY
+  // ============================================
+  
+  function initCarousel(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const wrapper = container.querySelector('.carousel-wrapper');
+    const prevBtn = container.querySelector('.carousel-arrow.prev');
+    const nextBtn = container.querySelector('.carousel-arrow.next');
+    
+    if (!wrapper) return;
+    
+    function checkScrollButtons() {
+      if (prevBtn && nextBtn) {
+        const scrollLeft = wrapper.scrollLeft;
+        const maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
+        
+        if (scrollLeft <= 10) {
+          prevBtn.classList.add('hidden');
+        } else {
+          prevBtn.classList.remove('hidden');
+        }
+        
+        if (maxScroll - scrollLeft <= 10) {
+          nextBtn.classList.add('hidden');
+        } else {
+          nextBtn.classList.remove('hidden');
+        }
+      }
+    }
+    
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        wrapper.scrollBy({ left: -300, behavior: 'smooth' });
+        setTimeout(checkScrollButtons, 300);
+      });
+    }
+    
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        wrapper.scrollBy({ left: 300, behavior: 'smooth' });
+        setTimeout(checkScrollButtons, 300);
+      });
+    }
+    
+    wrapper.addEventListener('scroll', checkScrollButtons);
+    window.addEventListener('resize', checkScrollButtons);
+    setTimeout(checkScrollButtons, 100);
+  }
+  
+  // Initialize all carousels when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    initCarousel('bestsellersCarousel');
+    initCarousel('newArrivalsCarousel');
+    initCarousel('personalizedCarousel');
+  });
 </script>
 {% endblock %}

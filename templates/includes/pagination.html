@@ -1,0 +1,76 @@
+{% if page_obj.has_other_pages %}
+<div class="pagination-container">
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" class="page-link prev">
+        <i class="fas fa-chevron-left"></i> Previous
+      </a>
+    {% endif %}
+    
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <span class="page-link active">{{ num }}</span>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+    
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="page-link next">
+        Next <i class="fas fa-chevron-right"></i>
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .pagination-container {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+  }
+  
+  .pagination {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .page-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--fg);
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  
+  .page-link:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  .page-link.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  .page-link.prev, .page-link.next {
+    font-weight: 500;
+  }
+  
+  @media (max-width: 768px) {
+    .page-link {
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+  }
+</style>
+{% endif %}

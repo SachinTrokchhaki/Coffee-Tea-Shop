@@ -105,6 +105,57 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
   
+  /* Pagination Styles */
+  .pagination-container {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+  }
+  
+  .pagination {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .page-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 18px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--fg);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  
+  .page-link:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  
+  .page-link.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  .page-link.prev, .page-link.next {
+    font-weight: 600;
+  }
+  
+  .page-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
   @keyframes slideInRight {
     from {
       transform: translateX(100%);
@@ -127,6 +178,11 @@
     
     .products-hero p {
       font-size: 1rem;
+    }
+    
+    .page-link {
+      padding: 6px 12px;
+      font-size: 14px;
     }
   }
   
@@ -189,6 +245,42 @@
         <p>No products available at the moment. Please check back later!</p>
       </div>
       {% endfor %}
+    </div>
+    
+    <!-- PAGINATION SECTION -->
+    <div class="pagination-container">
+      <div class="pagination">
+        <!-- Previous Button -->
+        {% if products.has_previous %}
+          <a href="?page={{ products.previous_page_number }}" class="page-link prev">
+            <i class="fas fa-chevron-left"></i> Previous
+          </a>
+        {% else %}
+          <span class="page-link prev disabled">
+            <i class="fas fa-chevron-left"></i> Previous
+          </span>
+        {% endif %}
+        
+        <!-- Page Numbers -->
+        {% for num in products.paginator.page_range %}
+          {% if products.number == num %}
+            <span class="page-link active">{{ num }}</span>
+          {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+        
+        <!-- Next Button -->
+        {% if products.has_next %}
+          <a href="?page={{ products.next_page_number }}" class="page-link next">
+            Next <i class="fas fa-chevron-right"></i>
+          </a>
+        {% else %}
+          <span class="page-link next disabled">
+            Next <i class="fas fa-chevron-right"></i>
+          </span>
+        {% endif %}
+      </div>
     </div>
   </div>
 </section>

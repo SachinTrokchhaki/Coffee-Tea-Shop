@@ -26,6 +26,17 @@
         <li><a href="/contact/" class="{% block contact_active %}{% endblock %}">Contact</a></li>
         <li><a href="/cart/">🛒 Cart <span id="cartCountDesktop" class="cart-count">0</span></a></li>
         
+        <!-- Search Bar -->
+        <li class="nav-search">
+          <form method="get" action="{% url 'products:search' %}" class="search-form-nav" id="searchForm">
+            <div class="search-wrapper">
+              <input type="text" name="q" id="searchInput" placeholder="Search coffee, tea..." class="search-input-nav" autocomplete="off">
+              <button type="submit"><i class="fas fa-search"></i></button>
+              <div id="searchSuggestions" class="search-suggestions"></div>
+            </div>
+          </form>
+        </li>
+        
         {% if user.is_authenticated %}
           <!-- Profile Dropdown for logged in users -->
           <li class="dropdown">
@@ -80,6 +91,7 @@
         <li><a href="/about/">📖 About</a></li>
         <li><a href="/contact/">📞 Contact</a></li>
         <li><a href="/cart/">🛒 Cart</a></li>
+        <li><a href="/products/search/">🔍 Search</a></li>
         
         {% if user.is_authenticated %}
           <li><hr class="mobile-divider"></li>
@@ -112,9 +124,9 @@
           <p>Handcrafted beverages made with love and passion since 2024.</p>
           <div class="social-links">
             <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.instagram.com/?hl=en"><i class="fab fa-instagram"></i></a>
+            <a href="https://x.com/"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.youtube.com/"><i class="fab fa-youtube"></i></a>
           </div>
         </div>
         <div class="footer-links">
@@ -151,6 +163,56 @@
   </footer>
 
   <script src="{% static 'js/script.js' %}"></script>
+  
+  <!-- Search Autocomplete JavaScript -->
+  <script>
+    // Search Autocomplete
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsDiv = document.getElementById('searchSuggestions');
+    let debounceTimer;
+    
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+          suggestionsDiv.style.display = 'none';
+          return;
+        }
+        
+        debounceTimer = setTimeout(() => {
+          fetch(`/products/search/?q=${encodeURIComponent(query)}`, {
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.results && data.results.length > 0) {
+              suggestionsDiv.innerHTML = data.results.map(item => `
+                <div class="suggestion-item" onclick="window.location.href='/products/${item.id}/'">
+                  ${item.name} - रू ${item.price}
+                </div>
+              `).join('');
+              suggestionsDiv.style.display = 'block';
+            } else {
+              suggestionsDiv.innerHTML = '<div class="suggestion-item no-result">No products found</div>';
+              suggestionsDiv.style.display = 'block';
+            }
+          });
+        }, 300);
+      });
+      
+      // Hide suggestions when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+          suggestionsDiv.style.display = 'none';
+        }
+      });
+    }
+  </script>
+  
   {% block extra_js %}{% endblock %}
 </body>
 </html>

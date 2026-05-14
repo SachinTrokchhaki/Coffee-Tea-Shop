@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Results - Coffee & Tea Shop{% endblock %}
+
+{% block content %}
+<section class="search-page">
+  <div class="container">
+    <div class="search-header">
+      <h1>Search Results</h1>
+      {% if query %}
+        <p>Showing results for: <strong>"{{ query }}"</strong></p>
+        <p class="result-count">{{ product_count }} product(s) found</p>
+      {% endif %}
+    </div>
+
+    <div class="search-form">
+      <form method="get" action="{% url 'products:search' %}">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search for coffee, tea, or products..." class="search-input">
+        <button type="submit" class="search-btn"><i class="fas fa-search"></i> Search</button>
+      </form>
+    </div>
+
+    {% if products %}
+    <div class="search-results">
+      <div class="menu-grid">
+        {% for product in search_results %}
+        <div class="product-card">
+          <div class="product-image">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+              <img src="{% static 'images/placeholder.jpg' %}" alt="{{ product.name }}">
+            {% endif %}
+          </div>
+          <div class="product-card-body">
+            <h3>{{ product.name }}</h3>
+            <p class="desc">{{ product.description|truncatewords:10 }}</p>
+            <div class="product-footer">
+              <span class="price">रू {{ product.price|floatformat:2 }}</span>
+              <button class="add-to-cart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% elif query %}
+    <div class="no-results">
+      <i class="fas fa-search"></i>
+      <h3>No products found</h3>
+      <p>Try searching with different keywords or browse our categories.</p>
+      <a href="/products/" class="btn-primary">Browse All Products</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .search-page {
+    padding: 60px 20px;
+    background: var(--bg);
+    min-height: 60vh;
+  }
+  
+  .search-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .search-header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .result-count {
+    color: var(--primary);
+    font-weight: 500;
+  }
+  
+  .search-form {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .search-input {
+    flex: 1;
+    padding: 14px 20px;
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  
+  .search-btn {
+    padding: 14px 28px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+  }
+  
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  
+  .no-results i {
+    font-size: 64px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .search-form {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  // Add to cart functionality
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const productId = this.dataset.productId;
+      const productName = this.dataset.productName;
+      
+      fetch(`/cart/add/${productId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(`${productName} added to cart! 🛒`);
+        }
+      });
+    });
+  });
+  
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+{% endblock %}
